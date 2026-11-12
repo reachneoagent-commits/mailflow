@@ -16,10 +16,10 @@ fn main() {
     }
     let mut res = winresource::WindowsResource::new();
     res.set_icon("../../assets/app-icon/mailcraft.ico")
-        .set("ProductName", "MailCraft")
-        .set("FileDescription", "MailCraft mail and calendar")
-        .set("CompanyName", "MailCraft contributors")
-        .set("LegalCopyright", "Copyright (c) the MailCraft authors. MIT OR Apache-2.0.")
+        .set("ProductName", "Mailflow")
+        .set("FileDescription", "Mailflow mail and calendar")
+        .set("CompanyName", "Mailflow contributors")
+        .set("LegalCopyright", "Copyright (c) the Mailflow authors and the MailCraft contributors. MIT OR Apache-2.0.")
         .set("OriginalFilename", "mailcraft.exe")
         .set("InternalName", "mailcraft");
     if let Err(e) = res.compile() {

@@ -54,6 +54,11 @@ pub mod pictures;
 mod pinned;
 #[cfg(not(target_arch = "wasm32"))]
 mod push;
+// Mailflow: help with writing, from the model the owner chose.
+#[cfg(not(target_arch = "wasm32"))]
+pub mod ai;
+#[cfg(all(test, not(target_arch = "wasm32")))]
+mod ai_live_tests;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod report;
 #[cfg(not(target_arch = "wasm32"))]

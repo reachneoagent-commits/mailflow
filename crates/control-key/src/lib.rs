@@ -12,18 +12,19 @@ pub mod proof;
 mod proof_tests;
 
 /// The app's settings folder (preferences, logs, key files): macOS
-/// `~/Library/Application Support/MailCraft`, Windows `%APPDATA%\MailCraft`, otherwise
-/// `$XDG_CONFIG_HOME/mailcraft` or `~/.config/mailcraft`.
+/// `~/Library/Application Support/Mailflow`, Windows `%APPDATA%\Mailflow`, otherwise
+/// `$XDG_CONFIG_HOME/mailflow` or `~/.config/mailflow`. (Mailflow keeps its own, apart from a
+/// MailCraft on the same computer.)
 pub fn settings_dir() -> Option<PathBuf> {
     if cfg!(target_os = "macos") {
-        std::env::var_os("HOME").map(|h| PathBuf::from(h).join("Library/Application Support/MailCraft"))
+        std::env::var_os("HOME").map(|h| PathBuf::from(h).join("Library/Application Support/Mailflow"))
     } else if cfg!(windows) {
-        std::env::var_os("APPDATA").map(|a| PathBuf::from(a).join("MailCraft"))
+        std::env::var_os("APPDATA").map(|a| PathBuf::from(a).join("Mailflow"))
     } else {
         std::env::var_os("XDG_CONFIG_HOME")
             .map(PathBuf::from)
             .or_else(|| std::env::var_os("HOME").map(|h| PathBuf::from(h).join(".config")))
-            .map(|c| c.join("mailcraft"))
+            .map(|c| c.join("mailflow"))
     }
 }
 
@@ -85,7 +86,7 @@ mod tests {
     fn settings_dir_is_the_apps_folder() {
         if let Some(d) = settings_dir() {
             let name = d.file_name().and_then(|n| n.to_str()).unwrap_or("");
-            assert!(name == "mailcraft" || name == "MailCraft", "{}", d.display());
+            assert!(name == "mailflow" || name == "Mailflow", "{}", d.display());
         }
     }
 }

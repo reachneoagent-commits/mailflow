@@ -209,7 +209,7 @@ mod freedesktop {
             if alert.kind == AlertKind::Mail {
                 hints.insert("category", Value::from("email.arrived"));
             }
-            let sent: zbus::Result<u32> = proxy.call("Notify", &("MailCraft", 0u32, "", alert.title.as_str(), body.as_str(), offered, hints, -1i32));
+            let sent: zbus::Result<u32> = proxy.call("Notify", &("Mailflow", 0u32, "", alert.title.as_str(), body.as_str(), offered, hints, -1i32));
             match sent {
                 Ok(id) => {
                     if let Ok(mut shown) = shown.lock() {

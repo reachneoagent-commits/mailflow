@@ -49,6 +49,9 @@ mod agent_leaves_tests;
 mod agent_names_tests;
 #[cfg(test)]
 mod agent_undo_tests;
+pub mod ai_ui;
+#[cfg(test)]
+mod ai_ui_tests;
 pub mod alerts;
 pub mod approval;
 #[cfg(test)]
@@ -59,6 +62,8 @@ pub mod auto_replies;
 #[cfg(test)]
 mod auto_replies_tests;
 pub mod backstage;
+#[cfg(test)]
+mod brand_tests;
 mod calendar_sync;
 pub mod calendar_view;
 pub mod chrome;
@@ -140,6 +145,9 @@ mod merge_contacts;
 pub mod nav;
 #[cfg(test)]
 mod on_top_tests;
+pub mod onboarding;
+#[cfg(test)]
+mod onboarding_tests;
 mod open_shared;
 #[cfg(test)]
 mod open_shared_tests;
@@ -213,6 +221,9 @@ mod text_menu_tests;
 pub mod theme;
 #[cfg(test)]
 mod theme_choice_tests;
+#[cfg(test)]
+mod theme_mailflow_tests;
+mod theme_picker;
 pub mod unconfirmed;
 #[cfg(test)]
 mod update_switches_tests;
@@ -353,6 +364,12 @@ pub struct Services {
     /// remembered between runs when the owner wants that. Never the mailbox file, the settings or
     /// a log.
     pub secrets: Option<std::sync::Arc<dyn SecretStore>>,
+    /// Mailflow, desktop: ask the language model the owner chose for help with a text, on a
+    /// background thread (`mailcraft_net::ai::run`). Run only by the owner's own press of a
+    /// button ([`ai_ui`]), never by a command, an agent or by itself. The host reads the key
+    /// from the credential store when the call brings none, and keeps a key the call brings
+    /// once the job has succeeded. Absent in the browser and the tests.
+    pub ai: Option<Box<dyn Fn(mailcraft_model::ai::Call) -> Receiver<Result<mailcraft_model::ai::Outcome, mailcraft_model::ai::Failure>>>>,
     /// Desktop: the owner's own certificates and keys (#30 R13; [`own_keys`]), on a background
     /// thread: list them where the system keeps them (the Windows certificate store, the macOS
     /// keychain, PKCS#11 tokens, GnuPG), read which OpenPGP keys GnuPG trusts fully, import a
@@ -929,6 +946,22 @@ pub struct UiState {
     pub high_contrast: bool,
     /// The accent colour of the window.
     pub accent: theme::Accent,
+    /// Mailflow: the colour theme of the window.
+    pub color_theme: theme::ColorTheme,
+    /// Mailflow: the setup has been gone through or skipped. Only a first start turns it off
+    /// ([`MailApp::begin_onboarding`]).
+    #[serde(deserialize_with = "onboarding::lenient_done")]
+    pub onboarded: bool,
+    /// Mailflow: the sections of the setup the owner skipped, by code, offered again in the
+    /// folder pane until done.
+    #[serde(deserialize_with = "onboarding::lenient_pages")]
+    pub setup_skipped: Vec<String>,
+    /// Mailflow: help with writing: the provider, the model and the owner's preferences (never
+    /// the key).
+    pub ai: mailcraft_model::ai::Settings,
+    /// Mailflow: the owner closed the card that offers them.
+    #[serde(deserialize_with = "theme::lenient_bool")]
+    pub setup_reminder_hidden: bool,
     /// A message's body on a light page in the light theme's colours, as its sender made it, also
     /// when the window is dark: the reading pane and a message's own window, not its header.
     pub light_messages: bool,
@@ -1041,6 +1074,11 @@ impl Default for UiState {
             theme: theme::Appearance::default(),
             high_contrast: false,
             accent: theme::Accent::default(),
+            color_theme: theme::ColorTheme::default(),
+            onboarded: true,
+            setup_skipped: Vec::new(),
+            ai: mailcraft_model::ai::Settings::default(),
+            setup_reminder_hidden: false,
             light_messages: false,
             replies_in_window: false,
             interface_size: theme::InterfaceSize::default(),
@@ -1119,6 +1157,25 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
     ("ui.theme", "Interface Theme", "File › Options", r#"{"value": "light"|"dark"|"system"}"#),
     ("ui.highContrast", "High Contrast", "File › Options", r#"{"on": true|false}"#),
     ("ui.accent", "Accent Colour", "File › Options", r#"{"accent": "blue"|"teal"|"violet"|"graphite"}"#),
+    ("ui.colorTheme", "Colour Theme", "File › Options", r#"{"theme": "mailflow"|"ember"|"evergreen"|"stillwater"|"rose-pine"|"graphite"}"#),
+    (
+        "ui.ai",
+        "Writing Help Settings",
+        "File › Options",
+        r#"{"enabled"?: bool, "provider"?: "ollama"|"lmstudio"|"groq"|"gemini"|"openrouter"|"openai"|"anthropic"|"nvidia"|"custom", "model"?: text, "baseUrl"?: text, "tone"?: "natural"|"friendly"|"professional"|"formal"|"direct", "length"?: "concise"|"balanced"|"detailed", "language"?: text, "instructions"?: text}"#,
+    ),
+    (
+        "ui.aiAssist",
+        "Writing Help",
+        "Review › Writing Help",
+        r#"{"action"?: "rewrite"|"humanize"|"grammar"|"professional"|"friendly"|"concise"|"elaborate"|"clarity"|"custom"}"#,
+    ),
+    (
+        "ui.onboarding",
+        "Run Setup",
+        "Help › Help",
+        r#"{"page"?: "welcome"|"email"|"appearance"|"finish", "skip"?: "email"|"appearance", "next"?: page, "done"?: true, "reminder"?: true|false}"#,
+    ),
     (
         "ui.lightMessages",
         "Messages on a Light Background",
@@ -1725,6 +1782,10 @@ pub struct MailApp {
     /// Open account setup when the app starts on a mailbox nobody has set up yet (the host turns
     /// this on for an ordinary start; not for the sample or a mailbox named on the command line).
     pub offer_setup: bool,
+    /// Mailflow: help with writing: what the window keeps for it ([`ai_ui`]).
+    pub ai: ai_ui::State,
+    /// Mailflow: the page of the setup that is shown while `ui.onboarded` is off.
+    pub onboarding_page: onboarding::Page,
     /// Offer each Microsoft account still on IMAP the switch to Microsoft Graph, on its page, by
     /// itself ([`graph_switch`]): the desktop app does, for a mailbox kept in a file. Off, the
     /// page opens only when asked for (`ui.graphSwitch`).
@@ -1980,6 +2041,8 @@ impl MailApp {
             data_removed: false,
             autosave: true,
             offer_setup: false,
+            onboarding_page: onboarding::Page::default(),
+            ai: ai_ui::State::default(),
             offer_graph_switch: false,
             graph_switch_shown: Default::default(),
             graph_switch_tried: Default::default(),
@@ -2078,6 +2141,12 @@ impl MailApp {
     /// off (#755). The hosts call this where they would otherwise [`MailApp::apply_prefs`].
     pub fn fresh_prefs(&mut self) {
         self.session.prefs = fresh_options();
+    }
+
+    /// Mailflow: a first start (no settings were ever saved) begins with the setup.
+    pub fn begin_onboarding(&mut self) {
+        self.ui.onboarded = false;
+        self.onboarding_page = onboarding::Page::default();
     }
 
     /// Restore preferences saved by [`MailApp::prefs`].
@@ -2593,6 +2662,20 @@ impl MailApp {
                 }
                 None => Err("`accent` is blue, teal, violet or graphite".into()),
             },
+            // Mailflow: the colour theme, and with it the accent high contrast is shown in.
+            "ui.colorTheme" => match s("theme").and_then(theme::ColorTheme::from_code) {
+                Some(c) => {
+                    self.ui.color_theme = c;
+                    self.ui.accent = c.contrast_accent();
+                    Ok(json!({"theme": c.code()}))
+                }
+                None => Err("`theme` is mailflow, ember, evergreen, stillwater, rose-pine or graphite".into()),
+            },
+            // Mailflow: the setup ([`onboarding::command`]).
+            "ui.onboarding" => onboarding::command(self, p),
+            // Mailflow: help with writing: its settings, and its window. Neither sends anything.
+            "ui.ai" => ai_ui::command(self, p),
+            "ui.aiAssist" => ai_ui::open_assist(self, p),
             "ui.language" => {
                 let code = s("language").unwrap_or_default();
                 let lang = i18n::Lang::from_code(code);
@@ -4672,7 +4755,12 @@ impl MailApp {
         }
         // Settled from the main window's input, so every window has the same theme.
         let preference = self.ui.theme.preference(theme::main_system_theme(ctx));
-        let choice = theme::ThemeChoice { appearance: self.ui.theme, accent: self.ui.accent, high_contrast: self.ui.high_contrast };
+        let choice = theme::ThemeChoice {
+            appearance: self.ui.theme,
+            accent: self.ui.accent,
+            high_contrast: self.ui.high_contrast,
+            color_theme: self.ui.color_theme,
+        };
         if self.applied_theme != Some((preference, choice)) {
             theme::apply(ctx, preference, &choice);
             self.applied_theme = Some((preference, choice));
@@ -4763,7 +4851,8 @@ impl MailApp {
         reminders::tick(self, ctx);
         // What was done in the Reminders window, which has passes of its own (#771).
         reminders::carry_out(self, ctx);
-        if std::mem::take(&mut self.offer_setup) && self.dialog.is_none() && self.needs_setup() {
+        // Mailflow: during the setup, Add Account is the setup's to offer.
+        if self.ui.onboarded && std::mem::take(&mut self.offer_setup) && self.dialog.is_none() && self.needs_setup() {
             self.dialog = dialogs::Dialog::open("account", self, &json!({}));
         }
         self.poll_graph_switch_copy();
@@ -5215,6 +5304,10 @@ impl MailApp {
         sync_panel::show(self, &ctx);
         dialogs::show(self, &ctx);
         reminders::show(self, &ctx);
+        // Mailflow: the setup of a first start, and help with writing.
+        onboarding::show(self, &ctx);
+        ai_ui::poll(self);
+        ai_ui::show(self, &ctx);
         // What was chosen in a text's menu, once everything that has one is drawn.
         text_menu::carry_out(self, &ctx);
         // Over everything: what an agent wants that needs the owner.

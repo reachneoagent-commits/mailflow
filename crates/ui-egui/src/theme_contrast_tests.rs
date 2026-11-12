@@ -102,6 +102,12 @@ fn every_theme() -> Vec<(String, Tokens, bool)> {
             }
         }
     }
+    // Mailflow: every colour theme, light and dark (their high contrast is the accents' above).
+    for theme in super::ColorTheme::ALL {
+        for dark in [false, true] {
+            all.push((format!("{} {}", theme.code(), if dark { "dark" } else { "light" }), theme.tokens(dark), false));
+        }
+    }
     all
 }
 

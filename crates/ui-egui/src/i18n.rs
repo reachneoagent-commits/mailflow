@@ -131,18 +131,83 @@ fn hold_language() -> LanguageHold {
 
 /// `s` in the interface language.
 pub fn t(s: &str) -> &str {
-    current().t(s)
+    branded(current().t(s))
+}
+
+/// Mailflow: the name the program was written under, as the interface's texts have it.
+const UPSTREAM: &str = "MailCraft";
+
+/// Mailflow: the name the window says instead.
+pub const BRAND: &str = "Mailflow";
+
+/// Mailflow: whether the window says [`BRAND`]. Off until a host turns it on ([`use_brand`]), so
+/// that upstream's tests, which read upstream's texts, run on them unchanged.
+static BRANDED: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+
+/// Mailflow: have the window say the program's name as [`BRAND`] from now on. The hosts (the
+/// desktop program, the web one, the screenshot example) call it once at their start.
+pub fn use_brand(on: bool) {
+    BRANDED.store(on, Ordering::Relaxed);
+}
+
+/// Mailflow: the program's name as the window says it.
+pub fn name() -> &'static str {
+    if BRANDED.load(Ordering::Relaxed) { BRAND } else { UPSTREAM }
+}
+
+/// Mailflow: what follows the upstream name where it means the upstream project and its people
+/// (who a problem report goes to, who wrote the program), not this program: there it stays.
+const UPSTREAM_ITSELF: [&str; 4] = [" team", "'s makers", " contributors", " project"];
+
+/// Mailflow: `s` with the program's name as this build has it. Every text the window shows comes
+/// through here ([`t`], [`tc`], [`tn`]), so the texts themselves stay upstream's, in every
+/// language, and merge with upstream's changes.
+pub fn brand_text(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    let mut rest = s;
+    while let Some(at) = rest.find(UPSTREAM) {
+        let (before, from) = rest.split_at(at);
+        let after = from.get(UPSTREAM.len()..).unwrap_or("");
+        out.push_str(before);
+        out.push_str(if UPSTREAM_ITSELF.iter().any(|kept| after.starts_with(kept)) { UPSTREAM } else { BRAND });
+        rest = after;
+    }
+    out.push_str(rest);
+    out
+}
+
+/// Mailflow: [`brand_text`] for a text that lives as long as the program (a catalogue's entry or
+/// a literal): each is rewritten once and kept. The texts are the interface's own, so there are
+/// only so many; past [`BRANDED_MAX`] of them a text is shown as it is rather than kept.
+fn branded(s: &str) -> &str {
+    const BRANDED_MAX: usize = 4096;
+    static KEPT: std::sync::Mutex<Option<std::collections::HashMap<String, &'static str>>> = std::sync::Mutex::new(None);
+    if !BRANDED.load(Ordering::Relaxed) || !s.contains(UPSTREAM) {
+        return s;
+    }
+    let mut held = KEPT.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+    let kept = held.get_or_insert_with(std::collections::HashMap::new);
+    if let Some(done) = kept.get(s) {
+        return done;
+    }
+    if kept.len() >= BRANDED_MAX {
+        return s;
+    }
+    let done: &'static str = Box::leak(brand_text(s).into_boxed_str());
+    kept.insert(s.to_string(), done);
+    done
 }
 
 /// `s` in `context` (`msgctxt`), in the interface language.
 pub fn tc<'a>(context: &str, s: &'a str) -> &'a str {
-    current().tc(context, s)
+    branded(current().tc(context, s))
 }
 
 /// The form for a count of `n` of `one` / `other` (English singular and plural), in the interface
 /// language, with `{n}` filled in (other placeholders are left to [`fmt`]).
 pub fn tn(n: u64, one: &str, other: &str) -> String {
-    fmt(current().tn(n, one, other), &[("n", &n.to_string())])
+    let text = fmt(current().tn(n, one, other), &[("n", &n.to_string())]);
+    if BRANDED.load(Ordering::Relaxed) && text.contains(UPSTREAM) { brand_text(&text) } else { text }
 }
 
 /// A number of things, for [`tn`]: any integer (a negative one counts as none).

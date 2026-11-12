@@ -571,12 +571,24 @@ fn options(app: &mut MailApp, ui: &mut Ui, t: &Tokens) {
     if ui.checkbox(&mut strong, tl!("High contrast")).on_hover_text(tl!("Stronger text and edges, in the light or the dark theme.")).changed() {
         let _ = app.run("ui.highContrast", json!({"on": strong}));
     }
-    // The swatches wrap under the label in a narrow window rather than widening the page.
-    ui.horizontal_wrapped(|ui| {
-        let (r, _) = ui.allocate_exact_size(vec2(210.0, 24.0), Sense::hover());
-        ui.painter().text(pos2(r.min.x, r.center().y), Align2::LEFT_CENTER, tl!("Accent"), regular(12.5), t.text);
-        accent_swatches(app, ui, t);
-    });
+    // Mailflow: the colour themes. The accent is what high contrast is shown in, so its
+    // swatches are offered only then.
+    ui.add_space(4.0);
+    ui.label(egui::RichText::new(tl!("Colour theme")).font(regular(12.5)).color(t.text));
+    ui.add_space(2.0);
+    crate::theme_picker::color_theme_tiles(app, ui, t);
+    ui.add_space(4.0);
+    if ui.button(tl!("Run Setup Again…")).on_hover_text(tl!("The welcome pages: your account and the look of the window.")).clicked() {
+        let _ = app.run("ui.onboarding", json!({}));
+    }
+    if app.ui.high_contrast {
+        // The swatches wrap under the label in a narrow window rather than widening the page.
+        ui.horizontal_wrapped(|ui| {
+            let (r, _) = ui.allocate_exact_size(vec2(210.0, 24.0), Sense::hover());
+            ui.painter().text(pos2(r.min.x, r.center().y), Align2::LEFT_CENTER, tl!("Accent"), regular(12.5), t.text);
+            accent_swatches(app, ui, t);
+        });
+    }
     let mut light = app.ui.light_messages;
     if ui
         .checkbox(&mut light, tl!("Show messages on a light background in the dark theme"))
@@ -795,6 +807,27 @@ fn options(app: &mut MailApp, ui: &mut Ui, t: &Tokens) {
     }
     crate::reading::invitation_options(app, ui);
     time_zones(app, ui, &prefs);
+    // (Last on the page: the controls above stay where they were.)
+    // Mailflow: help with writing.
+    section(ui, tl!("Writing help"), t);
+    ui.label(if app.ui.ai.ready() {
+        tl!("On. It runs only when you ask for it, on a message you are writing.")
+    } else {
+        tl!("Off. Mail works without it. To use it, choose where it runs and press Test.")
+    });
+    crate::ai_ui::provider_panel(
+        app,
+        ui,
+        t,
+        &[
+            mailcraft_model::ai::Group::Local,
+            mailcraft_model::ai::Group::FreeTier,
+            mailcraft_model::ai::Group::Paid,
+            mailcraft_model::ai::Group::Custom,
+        ],
+    );
+    ui.add_space(6.0);
+    crate::ai_ui::prefs_panel(app, ui, t);
 }
 
 /// The time zone the calendar is shown in, and a second one for its time bar, each with a label

@@ -907,6 +907,17 @@ fn review() -> Tab {
                 Item::big("wordCount", "Word\nCount", "review.wordCount", no()).at(0, 3),
             ],
         ),
+        // Mailflow: help with writing, from the model the owner chose.
+        g(
+            "Writing Help",
+            vec![
+                Item::big("edit", "Rewrite", "ui.aiAssist", json!({"action": "rewrite"})).key("review.aiRewrite").at(0, 1),
+                Item::big("check", "Fix\nGrammar", "ui.aiAssist", json!({"action": "grammar"})).key("review.aiGrammar").at(0, 2),
+                Item::big("people", "Humanize", "ui.aiAssist", json!({"action": "humanize"})).key("review.aiHumanize").at(0, 3),
+                Item::big("notes", "Concise", "ui.aiAssist", json!({"action": "concise"})).key("review.aiConcise").at(0, 3),
+                Item::big("search", "Custom", "ui.aiAssist", json!({"action": "custom"})).key("review.aiCustom").at(0, 4),
+            ],
+        ),
         g("Accessibility", vec![Item::pending("review.accessibility", "Check Accessibility", 1)]),
         g("Language", vec![Item::pending("review.translate", "Translate", 2), Item::pending("review.language", "Language", 2)]),
     ])
@@ -1079,6 +1090,8 @@ fn help() -> Tab {
                 Item::big("favorite", "What's\nNew", "help.whatsNew", no()).at(0, 3),
                 Item::big("search", "Search\nCommands", "ui.dialog", json!({"name": "commands"})).key("help.commands").at(0, 1),
                 Item::big("about", "About\nMailCraft", "ui.dialog", json!({"name": "about"})).key("help.about").at(0, 2),
+                // Mailflow: the welcome pages again.
+                Item::big("settings", "Run\nSetup", "ui.onboarding", no()).key("help.setup").at(0, 2),
                 Item::big("copy", "Copy\nDiagnostics", "ui.copyDiagnostics", no()).at(0, 3),
                 Item::big("report", "Report a\nProblem", "ui.reportProblem", no()).at(0, 4),
             ],

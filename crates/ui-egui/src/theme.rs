@@ -9,6 +9,9 @@ use mailcraft_model::rich::Font;
 
 mod accent;
 pub use accent::{Accent, AccentInk, lenient_bool};
+// Mailflow: the colour themes (the brand's and five alternatives).
+mod mailflow;
+pub use mailflow::ColorTheme;
 
 /// MailCraft's own colour, the teal of its icon (and its darker ink for text on light
 /// backgrounds). The interface itself is neutral greys with a blue accent: see [`Tokens`].
@@ -466,6 +469,12 @@ impl Tokens {
     }
     /// The tokens in force: the palette last installed in `ctx` ([`apply`]), its dark half or its
     /// light half by the theme egui is on; the built-in palette before any is installed.
+    /// Mailflow: the light palette of the theme in use, whatever the window is in: what a message
+    /// kept on a light page in a dark window is drawn with.
+    pub fn light_of(ctx: &egui::Context) -> Tokens {
+        ctx.data(|d| d.get_temp::<Palette>(Palette::slot())).unwrap_or_else(Palette::builtin).light
+    }
+
     pub fn get(ctx: &egui::Context) -> Tokens {
         let dark = ctx.global_style().visuals.dark_mode;
         let palette = ctx.data(|d| d.get_temp::<Palette>(Palette::slot())).unwrap_or_else(Palette::builtin);
@@ -534,12 +543,20 @@ pub struct ThemeChoice {
     pub appearance: Appearance,
     pub accent: Accent,
     pub high_contrast: bool,
+    /// Mailflow: the colour theme, shown unless high contrast is on.
+    pub color_theme: ColorTheme,
 }
 
 impl ThemeChoice {
     /// The palette this choice shows.
     pub fn palette(&self) -> Palette {
-        Palette::for_choice(self.accent, self.high_contrast)
+        // Mailflow: high contrast is upstream's palette in the owner's accent; otherwise the
+        // colour theme's own two palettes.
+        if self.high_contrast {
+            Palette::for_choice(self.accent, true)
+        } else {
+            Palette { light: self.color_theme.tokens(false), dark: self.color_theme.tokens(true) }
+        }
     }
 }
 

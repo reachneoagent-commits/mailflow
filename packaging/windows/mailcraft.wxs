@@ -10,6 +10,7 @@
   Per-machine install into Program Files with a Start Menu shortcut. The installer shows the
   standard WiX dialogs: welcome + license, progress, and a finish page.
 
+  (Mailflow: these are Mailflow's own UpgradeCode and component GUIDs, not upstream MailCraft's.)
   UpgradeCode and the component GUIDs below belong to MailCraft alone. Never copy them from (or
   into) a sibling Craft app: Windows Installer treats every package sharing an UpgradeCode as one
   product, so a shared code makes one app's installer refuse to install ("a newer version is
@@ -17,14 +18,14 @@
 -->
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
   <Package
-      Name="MailCraft"
-      Manufacturer="MailCraft contributors"
+      Name="Mailflow"
+      Manufacturer="Mailflow contributors"
       Version="$(var.Version)"
-      UpgradeCode="647FB3CC-7876-4DC8-84D9-CE2DD295D1C7"
+      UpgradeCode="F7D5DD29-1E62-41B1-B314-7EC0BFE62740"
       Scope="perMachine"
       Compressed="yes"
       Language="1033">
-    <SummaryInformation Description="MailCraft mail and calendar" Manufacturer="MailCraft contributors" />
+    <SummaryInformation Description="Mailflow mail and calendar" Manufacturer="Mailflow contributors" />
     <!-- Any other version replaces the one installed: a newer one, the same X.Y.Z (successive
          pre-releases of one X.Y.Z replace each other; MSI versions are numeric, so 1.2.3-rc.1 and
          1.2.3-rc.2 are both 1.2.3; AllowDowngrades takes in AllowSameVersionUpgrades) and an
@@ -46,7 +47,7 @@
          LICENSE-APACHE. The finish page offers to launch MailCraft (ticked by default) through
          WixShellExec (WixToolset.Util.wixext); silent installs (/qn) never show it. -->
     <WixVariable Id="WixUILicenseRtf" Value="$(var.LicenseRtf)" />
-    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch MailCraft" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Mailflow" />
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
     <Property Id="WixShellExecTarget" Value="[#MailcraftExe]" />
     <CustomAction Id="LaunchMailcraft" BinaryRef="Wix4UtilCA_$(sys.BUILDARCHSHORT)" DllEntry="WixShellExec"
@@ -65,21 +66,21 @@
     <Property Id="DISABLEAUTOMATICUPDATES" Secure="yes" />
 
     <StandardDirectory Id="ProgramFiles6432Folder">
-      <Directory Id="INSTALLFOLDER" Name="MailCraft" />
+      <Directory Id="INSTALLFOLDER" Name="Mailflow" />
     </StandardDirectory>
     <StandardDirectory Id="ProgramMenuFolder" />
 
-    <Feature Id="Main" Title="MailCraft" Level="1">
+    <Feature Id="Main" Title="Mailflow" Level="1">
       <ComponentGroupRef Id="MailcraftFiles" />
     </Feature>
   </Package>
 
   <Fragment>
     <ComponentGroup Id="MailcraftFiles" Directory="INSTALLFOLDER">
-      <Component Id="MailcraftApp" Guid="6883EF8E-7160-4B89-85C5-0DB6E7264E61">
+      <Component Id="MailcraftApp" Guid="A0BBA99A-30C2-4834-836D-8927262B406F">
         <File Id="MailcraftExe" Source="$(var.BinDir)\mailcraft.exe" KeyPath="yes">
-          <Shortcut Id="StartMenuShortcut" Directory="ProgramMenuFolder" Name="MailCraft"
-              Description="MailCraft mail and calendar" WorkingDirectory="INSTALLFOLDER" Advertise="yes"
+          <Shortcut Id="StartMenuShortcut" Directory="ProgramMenuFolder" Name="Mailflow"
+              Description="Mailflow mail and calendar" WorkingDirectory="INSTALLFOLDER" Advertise="yes"
               Icon="MailcraftIcon.ico" IconIndex="0">
             <!-- The AppUserModelID Windows knows MailCraft by: it shows the program's desktop
                  alerts (toasts) only for a program it knows by such a shortcut
@@ -100,12 +101,12 @@
            A mailbox file (.mailcraft) is MailCraft's own and opens with it. A second start hands the
            file or link to the window that is already open (apps/mailcraft/src/single_instance.rs).
            Removed again on uninstall. -->
-      <Component Id="MailcraftFileTypes" Guid="D5E14B14-1BE0-4E96-A849-E5F04AC4D6BB">
+      <Component Id="MailcraftFileTypes" Guid="8CD9A495-64E9-4B15-8557-007AEE2B4D7C">
         <RegistryValue Root="HKLM" Key="Software\RegisteredApplications" Name="MailCraft" Value="Software\MailCraft\Capabilities" Type="string" KeyPath="yes" />
-        <RegistryValue Root="HKLM" Key="Software\MailCraft\Capabilities" Name="ApplicationName" Value="MailCraft" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\MailCraft\Capabilities" Name="ApplicationName" Value="Mailflow" Type="string" />
         <RegistryValue Root="HKLM" Key="Software\MailCraft\Capabilities" Name="ApplicationDescription" Value="Mail, calendar, contacts and tasks; opens messages, calendar files and contact cards." Type="string" />
         <RegistryValue Root="HKLM" Key="Software\MailCraft\Capabilities" Name="ApplicationIcon" Value="&quot;[#MailcraftExe]&quot;,0" Type="string" />
-        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\mailcraft.exe" Name="FriendlyAppName" Value="MailCraft" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\mailcraft.exe" Name="FriendlyAppName" Value="Mailflow" Type="string" />
         <RegistryValue Root="HKLM" Key="Software\Classes\Applications\mailcraft.exe\shell\open\command" Value="&quot;[#MailcraftExe]&quot; &quot;%1&quot;" Type="string" />
 
         <ProgId Id="MailCraft.Message" Description="Email Message" Icon="MailcraftExe" IconIndex="0" />
@@ -144,7 +145,7 @@
         <RegistryValue Root="HKLM" Key="Software\Classes\MailCraft.Url.mailto\shell\open\command" Value="&quot;[#MailcraftExe]&quot; &quot;%1&quot;" Type="string" />
         <RegistryValue Root="HKLM" Key="Software\MailCraft\Capabilities\URLAssociations" Name="mailto" Value="MailCraft.Url.mailto" Type="string" />
       </Component>
-      <Component Id="MailcraftUpdatePolicy" Guid="3B0C9E57-5A2D-4F0B-9C0E-7D8E2F61A4C3" Condition="DISABLEAUTOMATICUPDATES = 1">
+      <Component Id="MailcraftUpdatePolicy" Guid="828ADE4A-AF81-4B48-A903-B0905E41FCC7" Condition="DISABLEAUTOMATICUPDATES = 1">
         <RegistryValue Root="HKLM" Key="Software\Policies\MailCraft" Name="DisableAutomaticUpdates" Value="1" Type="integer" KeyPath="yes" />
       </Component>
       <Component Id="MailcraftCli">

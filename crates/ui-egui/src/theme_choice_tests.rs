@@ -75,5 +75,6 @@ fn the_window_shows_the_accent_and_high_contrast_at_once() {
     a.execute("ui.highContrast", json!({"on": false})).unwrap();
     a.execute("ui.accent", json!({"accent": "blue"})).unwrap();
     a.logic(&ctx);
-    assert_eq!(Tokens::get(&ctx).accent, Tokens::light().accent);
+    // Mailflow: without high contrast the window is in its colour theme, whatever the accent.
+    assert_eq!(Tokens::get(&ctx).accent, crate::theme::ColorTheme::default().tokens(false).accent);
 }

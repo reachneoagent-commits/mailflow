@@ -1,0 +1,48 @@
+{
+  "_note": "Mailflow theme sources. 'mailflow' is the brand default (from brand/brand color.png). The other five are colour tokens taken from tweakcn.com/community on 2026-11-12 (fonts, radius and shadows deliberately dropped: Mailflow keeps one typeface and one shape language across themes). These are SOURCE values; the app maps them onto MailCraft's Tokens struct and every theme must pass the contrast tests before shipping.",
+  "default": "mailflow",
+  "themes": [
+    {
+      "id": "mailflow",
+      "label": "Mailflow",
+      "source": "brand",
+      "light": { "background": "#ffffff", "foreground": "#202030", "card": "#ffffff", "popover": "#ffffff", "primary": "#4737ff", "primary-foreground": "#ffffff", "accent-text": "#3529bf", "secondary": "#f1f0ff", "secondary-foreground": "#202030", "muted": "#f4f4f8", "muted-foreground": "#5e5e6a", "accent": "#e6e3ff", "accent-foreground": "#3529bf", "destructive": "#d92d4a", "border": "#e3e2ee", "input": "#c9c8d8", "ring": "#4737ff", "sidebar": "#f7f7fb", "sidebar-foreground": "#202030", "sidebar-accent": "#e6e3ff", "sidebar-accent-foreground": "#3529bf", "sidebar-border": "#e3e2ee", "ai": "#0e9e9a" },
+      "dark": { "background": "#101018", "foreground": "#f4f3ff", "card": "#202030", "popover": "#262638", "primary": "#4737ff", "primary-foreground": "#ffffff", "accent-text": "#aca5ff", "secondary": "#2a2a3e", "secondary-foreground": "#f4f3ff", "muted": "#1a1a28", "muted-foreground": "#a3a3b5", "accent": "#2a2666", "accent-foreground": "#d1cdff", "destructive": "#ff6b81", "border": "#2e2e42", "input": "#45455c", "ring": "#aca5ff", "sidebar": "#0b0b12", "sidebar-foreground": "#f4f3ff", "sidebar-accent": "#2a2666", "sidebar-accent-foreground": "#d1cdff", "sidebar-border": "#202030", "ai": "#20e2dd" }
+    },
+    {
+      "id": "ember",
+      "label": "Ember",
+      "source": "tweakcn: \"Claude +\" by Luis Llanes (cmdght103000n04lh3e2ae93r)",
+      "light": { "background": "#faf9f5", "foreground": "#3d3929", "card": "#f5f4ef", "popover": "#ffffff", "primary": "#c96442", "primary-foreground": "#ffffff", "secondary": "#e9e6dc", "secondary-foreground": "#535146", "muted": "#ede9de", "muted-foreground": "#6e6d68", "accent": "#e9e6dc", "accent-foreground": "#28261b", "destructive": "#141413", "border": "#dad9d4", "input": "#b4b2a7", "ring": "#c96442", "sidebar": "#f5f4ee", "sidebar-foreground": "#3d3d3a", "sidebar-accent": "#e9e6dc", "sidebar-accent-foreground": "#343434", "sidebar-border": "#ebebeb" },
+      "dark": { "background": "#262624", "foreground": "#f1f1ef", "card": "#2c2c2b", "popover": "#30302e", "primary": "#d97757", "primary-foreground": "#141413", "secondary": "#faf9f5", "secondary-foreground": "#30302e", "muted": "#1b1b19", "muted-foreground": "#b7b5a9", "accent": "#1a1915", "accent-foreground": "#f5f4ee", "destructive": "#ef4444", "border": "#3e3e38", "input": "#52514a", "ring": "#d97757", "sidebar": "#1f1e1d", "sidebar-foreground": "#c3c0b6", "sidebar-accent": "#0f0f0e", "sidebar-accent-foreground": "#c3c0b6", "sidebar-border": "#ebebeb" }
+    },
+    {
+      "id": "evergreen",
+      "label": "Evergreen",
+      "source": "tweakcn: \"Better Light Theme Supabase\" by Alexeeey (cmmdxhg6d000804l5f6xlcbh3)",
+      "light": { "background": "#fcfcfc", "foreground": "#171717", "card": "#fcfcfc", "popover": "#fcfcfc", "primary": "#008a50", "primary-foreground": "#ffffff", "secondary": "#fdfdfd", "secondary-foreground": "#171717", "muted": "#ededed", "muted-foreground": "#202020", "accent": "#ededed", "accent-foreground": "#202020", "destructive": "#ca3214", "border": "#dfdfdf", "input": "#f6f6f6", "ring": "#008a50", "sidebar": "#fcfcfc", "sidebar-foreground": "#707070", "sidebar-accent": "#ededed", "sidebar-accent-foreground": "#202020", "sidebar-border": "#dfdfdf" },
+      "dark": { "background": "#121212", "foreground": "#e2e8f0", "card": "#171717", "popover": "#242424", "primary": "#008a50", "primary-foreground": "#dde8e3", "secondary": "#242424", "secondary-foreground": "#fafafa", "muted": "#1f1f1f", "muted-foreground": "#a2a2a2", "accent": "#313131", "accent-foreground": "#fafafa", "destructive": "#541c15", "border": "#292929", "input": "#242424", "ring": "#008a50", "sidebar": "#121212", "sidebar-foreground": "#898989", "sidebar-accent": "#313131", "sidebar-accent-foreground": "#fafafa", "sidebar-border": "#292929" }
+    },
+    {
+      "id": "stillwater",
+      "label": "Stillwater",
+      "source": "tweakcn: \"Stillwater\" by Sushmoy Roy (cmosbagdm000004ju5t9v43tb)",
+      "light": { "background": "#f7f7f8", "foreground": "#1a2530", "card": "#ffffff", "popover": "#ffffff", "primary": "#1a6289", "primary-foreground": "#ffffff", "secondary": "#ebeef2", "secondary-foreground": "#1a2530", "muted": "#ebeef2", "muted-foreground": "#5a6573", "accent": "#d9e6ee", "accent-foreground": "#0f4866", "destructive": "#b8413c", "border": "#dbe0e6", "input": "#dbe0e6", "ring": "#1d6c96", "sidebar": "#f1f3f6", "sidebar-foreground": "#1a2530", "sidebar-accent": "#d9e6ee", "sidebar-accent-foreground": "#0f4866", "sidebar-border": "#dbe0e6" },
+      "dark": { "background": "#0f1419", "foreground": "#e5e9ee", "card": "#161c24", "popover": "#1c232d", "primary": "#7ab0d0", "primary-foreground": "#0f1419", "secondary": "#1e2630", "secondary-foreground": "#e5e9ee", "muted": "#1e2630", "muted-foreground": "#8590a0", "accent": "#1e2630", "accent-foreground": "#a8cfe3", "destructive": "#dc6e69", "border": "#28313d", "input": "#28313d", "ring": "#7ab0d0", "sidebar": "#0b0f14", "sidebar-foreground": "#e5e9ee", "sidebar-accent": "#1e2630", "sidebar-accent-foreground": "#a8cfe3", "sidebar-border": "#1e2630" }
+    },
+    {
+      "id": "rose-pine",
+      "label": "Rosé Pine",
+      "source": "tweakcn: \"Rose Pine\" by Rudra Patel (cmlwpk095000004jp9lj7c9sw); palette originally rosepinetheme.com (MIT)",
+      "light": { "background": "#faf4ed", "foreground": "#575279", "card": "#fffaf3", "popover": "#f2e9e1", "primary": "#575279", "primary-foreground": "#faf4ed", "secondary": "#dfdad9", "secondary-foreground": "#575279", "muted": "#f4ede8", "muted-foreground": "#797593", "accent": "#f2e9e1", "accent-foreground": "#575279", "destructive": "#b4637a", "border": "#cecacd", "input": "#dfdad9", "ring": "#907aa9", "sidebar": "#fffaf3", "sidebar-foreground": "#575279", "sidebar-accent": "#f2e9e1", "sidebar-accent-foreground": "#575279", "sidebar-border": "#dfdad9", "sidebar-primary": "#907aa9" },
+      "dark": { "background": "#191724", "foreground": "#e0def4", "card": "#1f1d2e", "popover": "#26233a", "primary": "#e0def4", "primary-foreground": "#191724", "secondary": "#403d52", "secondary-foreground": "#e0def4", "muted": "#21202e", "muted-foreground": "#908caa", "accent": "#26233a", "accent-foreground": "#e0def4", "destructive": "#eb6f92", "border": "#403d52", "input": "#524f67", "ring": "#c4a7e7", "sidebar": "#1f1d2e", "sidebar-foreground": "#e0def4", "sidebar-accent": "#26233a", "sidebar-accent-foreground": "#e0def4", "sidebar-border": "#403d52", "sidebar-primary": "#c4a7e7" }
+    },
+    {
+      "id": "graphite",
+      "label": "Graphite",
+      "source": "tweakcn: \"Minimal Neutral\" by Luis Llanes (cmho4nr9l000h04l1gu419ckw); oklch greys converted to hex",
+      "light": { "background": "#ffffff", "foreground": "#0a0a0a", "card": "#fdfdfd", "popover": "#ffffff", "primary": "#171717", "primary-foreground": "#fafafa", "secondary": "#d4d4d4", "secondary-foreground": "#0a0a0a", "muted": "#eeeeee", "muted-foreground": "#737373", "accent": "#eeeeee", "accent-foreground": "#171717", "destructive": "#e7000b", "border": "#eeeeee", "input": "#f5f5f5", "ring": "#a1a1a1", "sidebar": "#fafafa", "sidebar-foreground": "#0a0a0a", "sidebar-accent": "#f5f5f5", "sidebar-accent-foreground": "#171717", "sidebar-border": "#e5e5e5" },
+      "dark": { "background": "#171717", "foreground": "#fafafa", "card": "#0f0f0f", "popover": "#171717", "primary": "#e5e5e5", "primary-foreground": "#171717", "secondary": "#262626", "secondary-foreground": "#fafafa", "muted": "#262626", "muted-foreground": "#a1a1a1", "accent": "#404040", "accent-foreground": "#fafafa", "destructive": "#ff6467", "border": "#262626", "input": "#262626", "ring": "#737373", "sidebar": "#262626", "sidebar-foreground": "#fafafa", "sidebar-accent": "#262626", "sidebar-accent-foreground": "#fafafa", "sidebar-border": "#282828" }
+    }
+  ]
+}

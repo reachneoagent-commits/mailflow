@@ -193,7 +193,7 @@ fn priorities(which: &str) -> &'static [(&'static str, u8)] {
             ("Draft", 3),
         ],
         "Insert" => &[("Include", 9), ("Links", 7), ("Illustrations", 5), ("Text", 5), ("Tables", 4), ("Symbols", 4)],
-        "Review" => &[("Proofing", 9), ("Accessibility", 4), ("Language", 3)],
+        "Review" => &[("Proofing", 9), ("Writing Help", 8), ("Accessibility", 4), ("Language", 3)],
         "Send / Receive" => &[("Send & Receive", 9), ("Accounts", 5), ("Preferences", 4)],
         "Folder" => &[("New", 9), ("Actions", 7), ("Properties", 6), ("Clean Up", 5), ("Favorites", 4), ("Export", 3)],
         "View" => &[("Layout", 9), ("Current View", 8), ("Arrangement", 8), ("Messages", 7), ("Calendar", 6), ("Window", 4), ("Search", 3)],

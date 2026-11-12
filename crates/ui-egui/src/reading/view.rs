@@ -445,7 +445,7 @@ pub fn doc_shown(ctx: &egui::Context, message: &Arc<Message>, place: Place, can_
 pub fn show(app: &mut MailApp, ui: &mut Ui, message: &Arc<Message>, place: Place, access: Access) {
     let ctx = ui.ctx().clone();
     let light = on_light_page(app, place);
-    let t = if light { Tokens::light() } else { Tokens::get(&ctx) };
+    let t = if light { Tokens::light_of(&ctx) } else { Tokens::get(&ctx) };
     // In steps of a few points, so that dragging the pane's edge does not lay a long message out
     // again for every pixel.
     let width = ((ui.available_width().min(super::MAX_TEXT_WIDTH) / WIDTH_STEP).floor() * WIDTH_STEP).max(1.0);
@@ -601,7 +601,7 @@ pub fn page(app: &MailApp, place: Place, ui: &mut Ui) -> egui::Frame {
         return egui::Frame::NONE;
     }
     *ui.visuals_mut() = ui.ctx().style_of(egui::Theme::Light).visuals.clone();
-    egui::Frame::NONE.fill(Tokens::light().surface)
+    egui::Frame::NONE.fill(Tokens::light_of(ui.ctx()).surface)
 }
 
 /// Look at what is laid out of a message's body where it is shown, when it is shown there.

@@ -651,6 +651,8 @@ fn stand_in_picture(address: &str) -> Vec<u8> {
 }
 
 fn main() {
+    // Mailflow: the shots show the window as the program shows it.
+    mailcraft_ui_egui::i18n::use_brand(true);
     let path = std::env::args().nth(1).expect("usage: ui_shot script.jsonl");
     let script = std::fs::read_to_string(&path).expect("read script");
     let (tx, rx) = std::sync::mpsc::channel::<ControlRequest>();

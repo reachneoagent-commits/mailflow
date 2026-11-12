@@ -116,8 +116,8 @@ function ConvertTo-RtfText([string] $Text) {
   return $sb.ToString()
 }
 $paragraphs = [System.Collections.Generic.List[string]]::new()
-$paragraphs.Add('\b MailCraft\b0')
-$paragraphs.Add((ConvertTo-RtfText 'MailCraft is dual-licensed under the MIT License or the Apache License, Version 2.0, at your option. Both license texts follow. Bundled fonts and other third-party material keep their own open licenses, listed in NOTICE and ATTRIBUTION.md at https://github.com/UCS-Care-Group/mailcraft.'))
+$paragraphs.Add('\b Mailflow\b0')
+$paragraphs.Add((ConvertTo-RtfText 'Mailflow, built on MailCraft, is dual-licensed under the MIT License or the Apache License, Version 2.0, at your option. Both license texts follow. Bundled fonts and other third-party material keep their own open licenses, listed in NOTICE and ATTRIBUTION.md at https://github.com/UCS-Care-Group/mailcraft.'))
 foreach ($file in 'LICENSE-MIT', 'LICENSE-APACHE') {
   $title = $true  # each file opens with its license's name: show it bold
   foreach ($para in ((Get-Content -Raw (Join-Path $Root $file)) -split '\r?\n\s*\r?\n')) {
@@ -132,7 +132,7 @@ $rtf = '{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss\fcharset0 Tahoma;}}\vi
   ($paragraphs -join "\par`r`n") + "\par`r`n}`r`n"
 [System.IO.File]::WriteAllText($LicenseRtf, $rtf, [System.Text.Encoding]::ASCII)
 
-$Msi = Join-Path $Dist "mailcraft-$Version-windows-$Arch.msi"
+$Msi = Join-Path $Dist "mailflow-$Version-windows-$Arch.msi"
 Invoke-Native 'wix build' {
   wix build (Join-Path $PSScriptRoot 'mailcraft.wxs') -arch $Arch `
     -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext `
@@ -159,7 +159,7 @@ if ($env:CRAFT_FONTS_DIR) {
     Copy-Item $ofl.FullName (Join-Path $Portable "OFL-$($ofl.Directory.Name).txt")
   }
 }
-$Zip = Join-Path $Dist "mailcraft-$Version-windows-$Arch-portable.zip"
+$Zip = Join-Path $Dist "mailflow-$Version-windows-$Arch-portable.zip"
 Remove-Item -Force $Zip -ErrorAction SilentlyContinue
 Compress-Archive -Path $Portable -DestinationPath $Zip
 

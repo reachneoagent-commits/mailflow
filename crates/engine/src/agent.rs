@@ -386,6 +386,10 @@ const SAFE: &[&str] = &[
     "ui.theme",
     "ui.highContrast",
     "ui.accent",
+    "ui.colorTheme",
+    "ui.onboarding",
+    // Mailflow: opens the Writing Help window; nothing is sent until the owner presses Generate.
+    "ui.aiAssist",
     "ui.lightMessages",
     "ui.language",
     "ui.interfaceSize",
@@ -537,6 +541,9 @@ const SETTINGS: &[&str] = &[
 ];
 
 const NEVER: &[&str] = &[
+    // Mailflow: where help with writing sends the owner's text, and with which key: the owner's
+    // to set, in the window.
+    "ui.ai",
     // The host's side of a synchronisation: what came from a server is the host's to say.
     "sync.request",
     "sync.apply",

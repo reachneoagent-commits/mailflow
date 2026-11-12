@@ -628,7 +628,7 @@ fn run_window(options: eframe::NativeOptions, creator: eframe::AppCreator<'_>) -
             seen.store(true, std::sync::atomic::Ordering::Relaxed);
             creator(cc)
         });
-        let mut app = WithTokens(eframe::create_native("MailCraft", options, creator, &event_loop));
+        let mut app = WithTokens(eframe::create_native("Mailflow", options, creator, &event_loop));
         event_loop.run_app(&mut app)?;
         if started.load(std::sync::atomic::Ordering::Relaxed) {
             Ok(())
@@ -637,7 +637,7 @@ fn run_window(options: eframe::NativeOptions, creator: eframe::AppCreator<'_>) -
         }
     }
     #[cfg(not(any(target_os = "linux", target_os = "freebsd")))]
-    eframe::run_native("MailCraft", options, creator)
+    eframe::run_native("Mailflow", options, creator)
 }
 
 /// Sign an account's owner in: quietly with what was kept from last time when there is any, on
@@ -1710,6 +1710,7 @@ fn services(
     let update_ctx = ctx.clone();
     let download_ctx = ctx.clone();
     let report_ctx = ctx.clone();
+    let (ai_ctx, ai_store) = (ctx.clone(), secrets::store());
     let copy_ctx = ctx.clone();
     let tree_ctx = ctx.clone();
     let pst_ctx = ctx.clone();
@@ -1880,6 +1881,24 @@ fn services(
                 background(&report_ctx, "problem report", move || mailcraft_net::report::send(&report))
             }) as Box<dyn Fn(_) -> _>
         }),
+        // Mailflow: help with writing, on the owner's press alone. The key is read from the
+        // system's credential store here, off the window's thread, and one the owner just typed is
+        // kept there once the provider has accepted it.
+        ai: Some(Box::new(move |call: mailcraft_model::ai::Call| {
+            let store = ai_store.clone();
+            background(&ai_ctx, "writing help", move || {
+                let key = call.key.clone().or_else(|| store.as_ref().and_then(|s| s.get(&call.key_name))).unwrap_or_default();
+                let got = mailcraft_net::ai::run(&call, &key);
+                if got.is_ok()
+                    && call.remember_key
+                    && let (Some(store), Some(key)) = (store.as_ref(), call.key.as_ref())
+                    && let Err(e) = store.set(&call.key_name, key)
+                {
+                    log::warn!("the key for writing help couldn't be kept: {e}");
+                }
+                got
+            })
+        })),
         microsoft_client_id: microsoft_client_id(),
         google_client_id: google_client_id(),
         google_client_secret: google_client_secret(),
@@ -2012,12 +2031,14 @@ fn content_later(
 fn already_open() {
     let _ = rfd::MessageDialog::new()
         .set_level(rfd::MessageLevel::Warning)
-        .set_title("MailCraft")
+        .set_title("Mailflow")
         .set_description("MailCraft already has this mailbox open, but it isn't answering. Close that window (or end MailCraft in the system's task list) and start MailCraft again.")
         .show();
 }
 
 fn main() -> eframe::Result {
+    // Mailflow: the window says the program's name as Mailflow.
+    mailcraft_ui_egui::i18n::use_brand(true);
     // First, so the panic hook and every start-up warning are recorded (`logging`).
     let logger = logging::install();
     logging::install_panic_hook();
@@ -2137,7 +2158,7 @@ fn main() -> eframe::Result {
     }
     let mut options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
-            .with_title("MailCraft")
+            .with_title("Mailflow")
             .with_app_id(APP_ID)
             .with_inner_size([1440.0, 920.0])
             .with_min_inner_size([760.0, 480.0])
@@ -2255,7 +2276,13 @@ fn main() -> eframe::Result {
                 app.offer_graph_switch = kept && !sample;
                 match prefs {
                     Some(ui) => app.apply_prefs(ui),
-                    None => app.fresh_prefs(),
+                    None => {
+                        app.fresh_prefs();
+                        // Mailflow: no settings were ever saved (not: they couldn't be read).
+                        if settings_unread.is_none() && !sample {
+                            app.begin_onboarding();
+                        }
+                    }
                 }
                 app.settings_unread = settings_unread;
                 app.ui.window = restored;
@@ -2289,7 +2316,7 @@ fn main() -> eframe::Result {
                 Ok(bar) => Some(bar),
                 Err(e) => {
                     log::warn!("the menu bar couldn't be set up: {e}");
-                    if let Err(e) = quit_macos::install_app_menu(&cc.egui_ctx, "MailCraft") {
+                    if let Err(e) = quit_macos::install_app_menu(&cc.egui_ctx, "Mailflow") {
                         log::warn!("the app menu couldn't be set up, so Quit won't ask about unsaved work: {e}");
                     }
                     None

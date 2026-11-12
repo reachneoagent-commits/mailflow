@@ -956,13 +956,16 @@ fn the_theme_changes_the_colours_of_a_message_that_is_open() {
     harness.state_mut().execute("mail.select", json!({"id": id})).unwrap();
     harness.run_steps(4);
     let (plain, blue) = (ink(&harness, "Hi Owen"), ink(&harness, "Revised schedule attached"));
-    assert_eq!((plain, blue), (Tokens::light().text, Color32::from_rgb(0x1f, 0x49, 0x7d)));
+    assert_eq!((plain, blue), (Tokens::light_of(&harness.ctx).text, Color32::from_rgb(0x1f, 0x49, 0x7d)));
     harness.state_mut().execute("ui.theme", json!({"value": "dark"})).unwrap();
     harness.run_steps(4);
     let (plain, blue) = (ink(&harness, "Hi Owen"), ink(&harness, "Revised schedule attached"));
-    assert_eq!(plain, Tokens::dark().text);
+    assert_eq!(plain, crate::theme::ColorTheme::default().tokens(true).text);
     // Outlook's dark blue, turned light for the dark window: still blue, and readable.
-    assert!(blue.b() > blue.r() && contrast(blue, Tokens::dark().surface) >= super::colors::TARGET_CONTRAST, "{blue:?}");
+    assert!(
+        blue.b() > blue.r() && contrast(blue, crate::theme::ColorTheme::default().tokens(true).surface) >= super::colors::TARGET_CONTRAST,
+        "{blue:?}"
+    );
 }
 
 /// In the dark theme, an owner who keeps messages light reads them in the light theme's colours,
@@ -1044,7 +1047,7 @@ fn a_layout_begun_before_the_light_page_goes_on_in_its_colours() {
         (laid.done, inks.flatten().collect::<std::collections::HashSet<_>>())
     })
     .unwrap();
-    assert_eq!(inks, (true, std::collections::HashSet::from([Tokens::light().text])));
+    assert_eq!(inks, (true, std::collections::HashSet::from([crate::theme::ColorTheme::default().tokens(false).text])));
 }
 
 /// With messages kept light in the dark theme, what the owner writes keeps the window's colours:
@@ -1073,10 +1076,14 @@ fn the_owners_own_text_keeps_the_windows_colours() {
         .unwrap_or_else(|| panic!("nothing is laid out at {place:?}"))
     };
     let quote = inks(&harness, Place::Quote, id);
-    assert!(quote.contains(&Tokens::dark().text) && !quote.contains(&Tokens::light().text), "{quote:?}");
+    assert!(
+        quote.contains(&crate::theme::ColorTheme::default().tokens(true).text)
+            && !quote.contains(&crate::theme::ColorTheme::default().tokens(false).text),
+        "{quote:?}"
+    );
     harness.state_mut().execute("ui.backstage", json!({"value": true, "page": "signatures"})).unwrap();
     harness.run_steps(4);
-    assert_eq!(inks(&harness, Place::Preview, 0), std::collections::HashSet::from([Tokens::dark().text]));
+    assert_eq!(inks(&harness, Place::Preview, 0), std::collections::HashSet::from([crate::theme::ColorTheme::default().tokens(true).text]));
 }
 
 /// On a light page in a dark window the body's scroll bar is the light theme's, not the dark
@@ -1096,7 +1103,7 @@ fn a_light_page_scrolls_with_the_light_themes_bar() {
     harness.run_steps(30);
     let scroll = harness.ctx.global_style().spacing.scroll;
     let bar = rects(&harness).into_iter().filter(|r| page.contains_rect(r.rect) && r.rect.width() <= scroll.bar_width && r.fill.a() > 0);
-    let light = Tokens::light();
+    let light = Tokens::light_of(&harness.ctx);
     assert_eq!(
         bar.map(|r| r.fill).collect::<std::collections::HashSet<_>>(),
         std::collections::HashSet::from([
@@ -1123,7 +1130,9 @@ fn rects(harness: &Window) -> Vec<egui::epaint::RectShape> {
 /// The light pages painted in the last frame: rectangles in the light theme's surface colour
 /// taller and wider than a block of a message.
 fn light_pages(harness: &Window) -> Vec<egui::Rect> {
-    let pages = rects(harness).into_iter().filter(|r| r.fill == Tokens::light().surface && r.rect.width() > 300.0 && r.rect.height() > 300.0);
+    let pages = rects(harness)
+        .into_iter()
+        .filter(|r| r.fill == crate::theme::ColorTheme::default().tokens(false).surface && r.rect.width() > 300.0 && r.rect.height() > 300.0);
     pages.map(|r| r.rect).collect()
 }
 

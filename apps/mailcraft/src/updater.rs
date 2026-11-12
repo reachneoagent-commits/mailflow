@@ -29,8 +29,17 @@ pub const POLICY_KEY: &str = r"Software\Policies\MailCraft";
 #[cfg(target_os = "windows")]
 pub const POLICY_VALUE: &str = "DisableAutomaticUpdates";
 
+/// Mailflow: whether there is a Mailflow release channel for this build to update from.
+pub const MAILFLOW_RELEASES: bool = false;
+
 /// Whether the organisation has turned updating MailCraft by itself off for this computer.
 pub fn turned_off_by_organisation() -> bool {
+    // Mailflow: there are no Mailflow releases to update to yet, and the ones this would find
+    // are upstream MailCraft's, which must never be installed over Mailflow. Until Mailflow has
+    // a release channel of its own, updating by itself is off for everyone.
+    if !MAILFLOW_RELEASES {
+        return true;
+    }
     #[cfg(target_os = "windows")]
     {
         use winreg::RegKey;

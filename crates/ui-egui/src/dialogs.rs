@@ -1865,7 +1865,7 @@ pub fn show(app: &mut MailApp, ctx: &egui::Context) {
             close |= !open;
         }
         Dialog::Refused { text } => {
-            let open = window(ctx, "MailCraft", 420.0, |ui| {
+            let open = window(ctx, crate::i18n::name(), 420.0, |ui| {
                 ui.horizontal_top(|ui| {
                     // A warning mark drawn here: a round red dot with a white bar.
                     let (mark, _) = ui.allocate_exact_size(vec2(28.0, 28.0), egui::Sense::hover());
@@ -2008,11 +2008,15 @@ pub fn show(app: &mut MailApp, ctx: &egui::Context) {
                     });
                     return;
                 }
-                ui.label(egui::RichText::new("MailCraft").font(semibold(20.0)).color(t.accent_text));
+                ui.label(egui::RichText::new(crate::i18n::name()).font(semibold(20.0)).color(t.accent_text));
                 ui.label(
                     egui::RichText::new(crate::i18n::fmt(tl!("Version {version}"), &[("version", env!("CARGO_PKG_VERSION"))])).color(t.text_dim),
                 );
                 ui.label(tl!("Mail, calendar, people and tasks, written from scratch in Rust."));
+                // Mailflow: whose work this is.
+                if crate::i18n::name() == crate::i18n::BRAND {
+                    ui.label(tl!("Built on the MailCraft project, which is open source."));
+                }
                 crate::backstage::contributors(ui);
                 ui.label(tl!("Open source under the MIT License or the Apache License 2.0, at your option. The interface fonts are Inter, Source Sans 3 and JetBrains Mono (SIL Open Font License). Every icon is drawn in code."));
                 let parity = mailcraft_engine::catalog::parity(&app.session.registry);

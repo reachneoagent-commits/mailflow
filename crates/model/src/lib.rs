@@ -9,6 +9,10 @@
 #![deny(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::unimplemented, clippy::todo, clippy::unreachable)]
 
 mod address;
+// Mailflow: help with writing.
+pub mod ai;
+#[cfg(test)]
+mod ai_tests;
 pub mod auth_results;
 pub mod auto_replies;
 pub mod ber;

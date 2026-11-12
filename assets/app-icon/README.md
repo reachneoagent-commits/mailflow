@@ -1,11 +1,9 @@
-# MailCraft app icon
+# Mailflow app icon
 
-An **envelope that is also a calendar page**, with two ring tabs at its top, in front of two
-tilted sheets, on a rounded tile, in blue: mail, calendar and the rest of the program in one mark.
-
-The design is Martin Ball's. The SVG was drawn by hand as vectors for MailCraft (not traced, and
-nothing in it comes from any other product's icon). It is original work of the MailCraft
-contributors, under the project's licence (MIT OR Apache-2.0).
+The **Mailflow mark** (an envelope with a spark over it, `brand/logo only.svg`) in white on a
+rounded tile in the brand gradient. It is the owner's brand, not under the project's open-source
+licence (see `NOTICE`). The files keep the names upstream MailCraft gave them, so that the code and
+the packaging that read them are unchanged.
 
 ## Files
 

@@ -761,6 +761,12 @@ pub fn folder_pane(app: &mut MailApp, ui: &mut Ui) {
         sheet(ui.painter(), ui.max_rect(), &t);
         ui.spacing_mut().item_spacing = vec2(0.0, 0.0);
         pane_top(app, ui, &t);
+        // Mailflow: what is left of the setup, under the folders.
+        if app.ui.onboarded && !app.ui.setup_reminder_hidden && !crate::onboarding::remaining(app).is_empty() {
+            egui::Panel::bottom("finish-setup").frame(egui::Frame::NONE).show_separator_line(false).resizable(false).show(ui, |ui| {
+                crate::onboarding::setup_card(app, ui, &t);
+            });
+        }
         egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
             // (Counted once per change to the mailbox, not at every frame: `Session::folder_counts`.)
             let counts = app.session.folder_counts();

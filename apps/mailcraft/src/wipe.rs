@@ -79,14 +79,14 @@ impl Roots {
         if let Some(settings) = mailcraft_control_key::settings_dir() {
             roots.list.push(Root {
                 path: settings.clone(),
-                name: if cfg!(any(windows, target_os = "macos")) { "MailCraft" } else { "mailcraft" },
+                name: if cfg!(any(windows, target_os = "macos")) { "Mailflow" } else { "mailflow" },
                 itself: true,
             });
             roots.settings = Some(settings);
         }
         if let Some(attachments) = crate::opened_files::base() {
             if let Some(cache) = attachments.parent() {
-                roots.parents.push(Root { path: cache.to_path_buf(), name: "MailCraft", itself: true });
+                roots.parents.push(Root { path: cache.to_path_buf(), name: "Mailflow", itself: true });
             }
             roots.list.push(Root { path: attachments, name: "Attachments", itself: true });
         }

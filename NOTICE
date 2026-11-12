@@ -1,3 +1,10 @@
+Mailflow
+Mailflow is a fork of MailCraft (https://github.com/UCS-Care-Group/mailcraft) with its own name,
+look and additions. Mailflow's changes are licensed, like MailCraft, under the MIT License or the
+Apache License, Version 2.0, at your option. The Mailflow name, mark and app icon (brand/,
+assets/app-icon/) are its owner's brand and are not covered by that licence. Mailflow is not
+affiliated with or endorsed by the MailCraft project. MailCraft's own notice follows, unchanged.
+
 MailCraft
 Copyright (c) 2026 the MailCraft contributors.
 Licensed under the MIT License or the Apache License, Version 2.0, at your option
