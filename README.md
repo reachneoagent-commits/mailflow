@@ -47,9 +47,20 @@ With Ollama, Mailflow can have it fetch a small starter model (Qwen2.5 0.5B, abo
 
 ## Download and install
 
-**There are no installers yet.** Mailflow is in early development and its first release is being prepared. Until then you can [build it yourself](#build-it-yourself). When installers are published they will be on the [Releases page](https://github.com/reachneoagent-commits/mailflow/releases), for macOS (Apple Silicon and Intel) and Windows.
+Get the installer for your computer from the [Releases page](https://github.com/reachneoagent-commits/mailflow/releases/latest):
 
-Mailflow will not be signed with a paid Apple or Microsoft certificate, so your computer will warn you the first time you open it. The steps to get past that will be here with the first release.
+| Computer | File |
+|---|---|
+| Mac (Apple Silicon or Intel) | `mailflow-<version>-macos-universal.dmg` |
+| Windows (most PCs) | `mailflow-<version>-windows-x64.msi` |
+| Windows on ARM | `mailflow-<version>-windows-arm64.msi` |
+
+The `-portable.zip` files are the same Windows app without an installer.
+
+Mailflow is not signed with a paid Apple or Microsoft certificate, so your computer warns you the first time you open it:
+
+- **Mac:** open the dmg and drag Mailflow to Applications. Open it once; macOS will refuse. Then go to System Settings › Privacy & Security, scroll down, and click **Open Anyway** next to Mailflow.
+- **Windows:** when the blue "Windows protected your PC" box appears, click **More info**, then **Run anyway**.
 
 ## Build it yourself
 
@@ -75,11 +86,11 @@ The crates and the program keep MailCraft's names (`mailcraft`, `mailcraft-*`) s
 
 ## Status
 
-Early and not yet released. What to know before relying on it:
+Early. What to know before relying on it:
 
 - Signing in to Microsoft and Google accounts still goes through MailCraft's app registrations, so their sign-in pages say "MailCraft"
 - Mailflow does not update itself yet
-- The Windows installer has not been built or tested
+- The Windows build compiles and packages but has not been tried on a real Windows PC yet
 - Help with writing has no streaming, and a model download through Ollama shows no progress bar
 
 ## About this fork
