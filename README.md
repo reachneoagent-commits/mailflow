@@ -47,6 +47,8 @@ With Ollama, Mailflow can have it fetch a small starter model (Qwen2.5 0.5B, abo
 
 ## Download and install
 
+**Easiest:** install and update it with the [FlowApps launcher](https://github.com/reachneoagent-commits/FlowApps-Launcher/releases/latest), one app that also manages Flowgram, Voxflow and Mailflow on Mac and Windows. Or download an installer yourself below.
+
 Download the installer for your system (latest version, 0.12.0), then follow the steps for your system below.
 
 | Platform | Installer |
