@@ -1,0 +1,49 @@
+name: Mailflow Windows build
+
+# Builds Mailflow's Windows installer (.msi) and portable zip, unsigned, and keeps them as
+# workflow artifacts. Run by hand; it is given no secrets and publishes nothing.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
+  WIX_VERSION: "5.0.2"
+
+jobs:
+  windows:
+    name: Windows ${{ matrix.arch }}
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { arch: x64, target: x86_64-pc-windows-msvc }
+          - { arch: arm64, target: aarch64-pc-windows-msvc }
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
+        with:
+          toolchain: 1.98.1
+          targets: ${{ matrix.target }}
+      - name: Install WiX
+        shell: pwsh
+        run: |
+          dotnet tool install --global wix --version $env:WIX_VERSION
+          if ($LASTEXITCODE -ne 0) { throw 'dotnet tool install wix failed' }
+          wix extension add -g "WixToolset.UI.wixext/$env:WIX_VERSION" "WixToolset.Util.wixext/$env:WIX_VERSION"
+          if ($LASTEXITCODE -ne 0) { throw 'wix extension add failed' }
+      - name: Build and package
+        shell: pwsh
+        run: ./packaging/windows/package.ps1 -Arch ${{ matrix.arch }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: mailflow-windows-${{ matrix.arch }}
+          path: dist/release/mailflow-*
+          if-no-files-found: error
