@@ -47,15 +47,16 @@ With Ollama, Mailflow can have it fetch a small starter model (Qwen2.5 0.5B, abo
 
 ## Download and install
 
-Get the installer for your computer from the [Releases page](https://github.com/reachneoagent-commits/mailflow/releases/latest):
+Download the installer for your system (latest version, 0.12.0), then follow the steps for your system below.
 
-| Computer | File |
+| Platform | Installer |
 |---|---|
-| Mac (Apple Silicon or Intel) | `mailflow-<version>-macos-universal.dmg` |
-| Windows (most PCs) | `mailflow-<version>-windows-x64.msi` |
-| Windows on ARM | `mailflow-<version>-windows-arm64.msi` |
+| Windows x64 | [Installer](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.0/mailflow-0.12.0-windows-x64.msi) · [portable zip](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.0/mailflow-0.12.0-windows-x64-portable.zip) |
+| Windows ARM64 | [Installer](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.0/mailflow-0.12.0-windows-arm64.msi) · [portable zip](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.0/mailflow-0.12.0-windows-arm64-portable.zip) |
+| macOS Apple Silicon (M1 or newer) | [DMG](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.0/mailflow-0.12.0-macos-universal.dmg) |
+| macOS Intel | [DMG](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.0/mailflow-0.12.0-macos-universal.dmg) |
 
-The `-portable.zip` files are the same Windows app without an installer.
+Older versions are on the [Releases page](https://github.com/reachneoagent-commits/mailflow/releases).
 
 Mailflow is not signed with a paid Apple or Microsoft certificate, so your computer warns you the first time you open it:
 
