@@ -13,6 +13,10 @@
 //!   on this computer.
 //! - **The draft is the owner's.** The answer is shown beside the original; Accept puts it in as
 //!   one edit that Undo takes back, Discard leaves the draft as it was.
+//! - **The bar under a message being written** (`ui.aiDraft`, the Write with AI button, `/` in an
+//!   empty message) takes the owner's description of a message and writes it, or changes what is
+//!   written as they ask. Its answer goes into the draft as one edit, since the owner asked for
+//!   exactly that; Undo, in the bar and by its key, takes it back.
 //! - **The key is the owner's secret**: typed into a field that hides it, handed to the host,
 //!   kept in the system's credential store, never in the settings or a log.
 
@@ -33,6 +37,24 @@ pub enum Purpose {
     Models,
     Pull,
     Assist,
+    /// The bar under the message being written.
+    Bar,
+}
+
+/// The bar under a message being written: what the owner asks for in their own words.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct Bar {
+    /// The message it was opened on (`Session::compose_id`).
+    pub compose: u64,
+    pub text: String,
+    /// The part of the draft a request under way replaces, in characters, and its text.
+    pub(crate) target: Option<(usize, usize, String)>,
+    /// Why the last request brought nothing.
+    pub said: Option<String>,
+    /// The bar put text in the draft: Undo is offered.
+    pub wrote: bool,
+    /// The field takes the keyboard at its next frame.
+    pub(crate) focus: bool,
 }
 
 /// The Writing Help window's state.
@@ -60,6 +82,7 @@ pub struct State {
     /// A key being typed. Handed to the host with the next request and then forgotten here.
     pub(crate) key_field: String,
     pub assist: Option<Assist>,
+    pub bar: Option<Bar>,
 }
 
 impl State {
@@ -136,25 +159,163 @@ pub fn open_assist(app: &mut MailApp, p: &Value) -> Result<Value, String> {
             .and_then(Action::from_code)
             .ok_or("`action` is rewrite, humanize, grammar, professional, friendly, concise, elaborate, clarity or custom")?,
     };
-    let Some(doc) = app.session.compose.as_ref() else { return Err("no message is being written".into()) };
-    let plain = doc.body.plain();
-    let selection = doc.body.selection();
-    let chars = plain.chars().count();
-    // What is selected, or else what the owner wrote: not the signature, not a quoted message.
-    let (from, to) = if selection.is_empty() {
-        let range = ai::own_text(&plain);
-        let before = plain.get(..range.start).map_or(0, |s| s.chars().count());
-        let within = plain.get(range.clone()).map_or(0, |s| s.chars().count());
-        (before, before + within)
-    } else {
-        (selection.start().min(chars), selection.end().min(chars))
-    };
-    let original: String = plain.chars().skip(from).take(to.saturating_sub(from)).collect();
+    let Some((from, to, original)) = target(app) else { return Err("no message is being written".into()) };
     if original.trim().is_empty() {
         return Err("there is no text to work on yet: write something first".into());
     }
     app.ai.assist = Some(Assist { action, wish: String::new(), from, to, original, result: None });
     Ok(json!({"open": true, "action": action.code(), "ready": app.ui.ai.ready(), "characters": to - from}))
+}
+
+/// The part of the message being written that help is given with, in characters, and its text:
+/// what is selected, or else what the owner wrote (not the signature, not a quoted message).
+fn target(app: &MailApp) -> Option<(usize, usize, String)> {
+    let doc = app.session.compose.as_ref()?;
+    let plain = doc.body.plain();
+    let selection = doc.body.selection();
+    let chars = plain.chars().count();
+    let (from, to) = if selection.is_empty() {
+        let written = written(&doc.body);
+        let range = ai::own_text(&written);
+        let before = written.get(..range.start).map_or(0, |s| s.chars().count());
+        let within = written.get(range.clone()).map_or(0, |s| s.chars().count());
+        (before, before + within)
+    } else {
+        (selection.start().min(chars), selection.end().min(chars))
+    };
+    let original: String = plain.chars().skip(from).take(to.saturating_sub(from)).collect();
+    Some((from, to, original))
+}
+
+/// The text of a message being written down to its signature: the paragraphs before the first
+/// that is part of the signature put in it.
+fn written(body: &mailcraft_model::RichBody) -> String {
+    let plain = body.plain();
+    let paragraphs = body.text().paragraphs();
+    let Some(first) = paragraphs.iter().position(|p| p.signature) else { return plain };
+    // Each paragraph before it, and the line end after each.
+    let chars: usize = paragraphs.iter().take(first).map(|p| p.runs.iter().map(|r| r.text.chars().count()).sum::<usize>() + 1).sum();
+    plain.chars().take(chars).collect()
+}
+
+/// Whether the owner has written nothing yet in the message being written.
+pub(crate) fn blank(app: &MailApp) -> bool {
+    app.session.compose.as_ref().is_some_and(|doc| {
+        let written = written(&doc.body);
+        written.get(ai::own_text(&written)).is_none_or(|own| own.trim().is_empty())
+    })
+}
+
+/// `ui.aiDraft`: open the bar under the message being written (`"open": false` closes it), where
+/// the owner says what they want written. Sends nothing: the owner presses its button.
+pub fn open_bar(app: &mut MailApp, p: &Value) -> Result<Value, String> {
+    let open = match p.get("open") {
+        None => true,
+        Some(v) => v.as_bool().ok_or("`open` is true or false")?,
+    };
+    let Some(compose) = app.session.compose_id() else { return Err("no message is being written".into()) };
+    if open {
+        let same = app.ai.bar.as_ref().is_some_and(|b| b.compose == compose);
+        if !same {
+            app.ai.bar = Some(Bar { compose, ..Bar::default() });
+        }
+        if let Some(bar) = app.ai.bar.as_mut() {
+            bar.focus = true;
+        }
+    } else {
+        close_bar(app);
+    }
+    Ok(json!({"open": open, "ready": app.ui.ai.ready()}))
+}
+
+fn close_bar(app: &mut MailApp) {
+    if app.ai.bar.take().is_some() {
+        if app.ai.busy() == Some(Purpose::Bar) {
+            // An answer still on its way is for nobody.
+            app.ai.pending = None;
+        }
+        app.want_body_focus();
+    }
+}
+
+/// What the owner asked the bar for: their own words, or one of its ready changes.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum Wish {
+    Typed,
+    Ready(Action),
+}
+
+/// Send what the bar was asked, on the owner's press: a message written from their description
+/// when they have written nothing yet, else the change they ask for to what is selected or
+/// written.
+pub(crate) fn ask_bar(app: &mut MailApp, wish: Wish) {
+    if app.ai.pending.is_some() || !app.ui.ai.ready() {
+        return;
+    }
+    let Some((from, to, original)) = target(app) else { return };
+    let Some(typed) = app.ai.bar.as_ref().map(|b| b.text.trim().to_string()) else { return };
+    let empty = original.trim().is_empty();
+    let (system, user) = match wish {
+        Wish::Typed if typed.is_empty() => return,
+        Wish::Typed if empty => ai::draft_prompt(&app.ui.ai, &typed),
+        Wish::Typed => ai::prompt(Action::Custom, &app.ui.ai, &original, &typed),
+        Wish::Ready(_) if empty => return,
+        Wish::Ready(action) => ai::prompt(action, &app.ui.ai, &original, ""),
+    };
+    if let Some(bar) = app.ai.bar.as_mut() {
+        bar.target = Some((from, to, original));
+        bar.said = None;
+    }
+    start(app, Purpose::Bar, Job::Chat { system, user });
+}
+
+/// Take in the bar's answer: into the draft, in place of what it was asked about.
+fn bar_answer(app: &mut MailApp, got: Result<String, String>) {
+    let Some(bar) = app.ai.bar.as_mut() else { return };
+    let Some((from, to, original)) = bar.target.take() else { return };
+    let text = match got {
+        Ok(text) => text,
+        Err(why) => {
+            bar.said = Some(why);
+            return;
+        }
+    };
+    if app.session.compose_id() != Some(bar.compose) {
+        bar.said = Some(tl!("Another message was opened meanwhile, so what was written wasn't put in.").to_string());
+        return;
+    }
+    let part = Assist { action: Action::Custom, wish: String::new(), from, to, original, result: None };
+    let put = accept(app, &part, &text);
+    if let Some(bar) = app.ai.bar.as_mut() {
+        if put {
+            bar.text.clear();
+            bar.wrote = true;
+            bar.focus = true;
+        } else {
+            bar.said = Some(tl!("The draft changed while this was written, so it wasn't put in.").to_string());
+        }
+    }
+}
+
+/// A choice in the menu of the message's text (a right click): the Writing Help window on what
+/// is selected, and, as the owner chose it themselves, the request sent at once.
+pub(crate) fn from_menu(app: &mut MailApp, action: Action) {
+    if open_assist(app, &json!({"action": action.code()})).is_err() {
+        app.status(tl!("There is no text to work on yet: write something first."));
+        return;
+    }
+    // (Input the control channel injected opens the window and sends nothing.)
+    if !app.driven && app.ui.ai.ready() && action != Action::Custom {
+        generate(app);
+    }
+}
+
+/// Ask for what the Writing Help window is set to.
+fn generate(app: &mut MailApp) {
+    let Some(a) = app.ai.assist.as_mut() else { return };
+    a.result = None;
+    let (system, user) = ai::prompt(a.action, &app.ui.ai, &a.original, &a.wish);
+    start(app, Purpose::Assist, Job::Chat { system, user });
 }
 
 fn call(app: &MailApp, job: Job) -> Call {
@@ -185,12 +346,13 @@ fn start(app: &mut MailApp, purpose: Purpose, job: Job) {
                     a.result = Some(Err(said.1));
                 }
             }
+            Purpose::Bar => bar_answer(app, Err(said.1)),
             _ => app.ai.note = Some(said),
         }
         return;
     };
     app.ai.pending = Some((purpose, run(call)));
-    if purpose != Purpose::Assist {
+    if !matches!(purpose, Purpose::Assist | Purpose::Bar) {
         app.ai.note = None;
     }
 }
@@ -251,6 +413,9 @@ pub fn poll(app: &mut MailApp) {
                 a.result = Some(Err(words(&Failure::Garbled)));
             }
         }
+        (Purpose::Bar, Ok(Outcome::Text(text))) => bar_answer(app, Ok(text)),
+        (Purpose::Bar, Err(f)) => bar_answer(app, Err(words(&f))),
+        (Purpose::Bar, Ok(_)) => bar_answer(app, Err(words(&Failure::Garbled))),
         (_, Err(f)) => app.ai.note = Some((false, words(&f))),
         (_, Ok(_)) => app.ai.note = Some((false, words(&Failure::Garbled))),
     }
@@ -478,6 +643,10 @@ enum Press {
 
 /// The Writing Help window, over the message being written, while it is open.
 pub fn show(app: &mut MailApp, ctx: &egui::Context) {
+    // The bar goes with its message.
+    if app.ai.bar.is_some() && app.session.compose.is_none() {
+        app.ai.bar = None;
+    }
     if app.ai.assist.is_none() {
         return;
     }
@@ -583,15 +752,10 @@ pub fn show(app: &mut MailApp, ctx: &egui::Context) {
         });
     });
     match press {
-        Some(Press::Generate) => {
-            let Some(a) = app.ai.assist.as_mut() else { return };
-            a.result = None;
-            let (system, user) = ai::prompt(a.action, &app.ui.ai, &a.original, &a.wish);
-            start(app, Purpose::Assist, Job::Chat { system, user });
-        }
+        Some(Press::Generate) => generate(app),
         Some(Press::Accept(text)) => {
             let Some(a) = app.ai.assist.take() else { return };
-            accept(app, &a, &text);
+            let _ = accept(app, &a, &text);
         }
         Some(Press::Close) => {
             app.ai.assist = None;
@@ -610,14 +774,142 @@ pub fn show(app: &mut MailApp, ctx: &egui::Context) {
 
 /// Put `text` in the draft in place of what was worked on, when that part is still what it was:
 /// a draft changed meanwhile is left alone, and the owner is told.
-pub(crate) fn accept(app: &mut MailApp, a: &Assist, text: &str) {
+/// Whether it was put in.
+pub(crate) fn accept(app: &mut MailApp, a: &Assist, text: &str) -> bool {
     let still: Option<String> =
         app.session.compose.as_ref().map(|doc| doc.body.plain().chars().skip(a.from).take(a.to.saturating_sub(a.from)).collect());
     if still.as_deref() != Some(a.original.as_str()) {
         app.status(tl!("The draft changed while the suggestion was written, so it wasn't put in."));
+        return false;
+    }
+    app.run("compose.select", json!({"from": a.from, "to": a.to})).is_ok() && app.run("compose.type", json!({"text": text})).is_ok()
+}
+
+/// How tall the bar under the message being written is: nothing while it is closed.
+pub(crate) fn bar_height(app: &MailApp) -> f32 {
+    let open = app.ai.bar.as_ref().is_some_and(|b| Some(b.compose) == app.session.compose_id());
+    if open { BAR_HEIGHT } else { 0.0 }
+}
+
+const BAR_HEIGHT: f32 = 88.0;
+
+/// The changes the bar offers ready-made, and what each is called there.
+fn ready_changes() -> [(Action, &'static str); 4] {
+    [(Action::Rewrite, tl!("Polish")), (Action::Professional, tl!("Formal")), (Action::Friendly, tl!("Friendly")), (Action::Concise, tl!("Shorten"))]
+}
+
+/// The bar under the message being written, while it is open on it.
+pub(crate) fn bar(app: &mut MailApp, ui: &mut Ui) {
+    if bar_height(app) == 0.0 {
         return;
     }
-    if app.run("compose.select", json!({"from": a.from, "to": a.to})).is_ok() {
-        let _ = app.run("compose.type", json!({"text": text}));
+    let t = Tokens::get(ui.ctx());
+    let ready = app.ui.ai.ready();
+    let busy = app.ai.busy() == Some(Purpose::Bar);
+    let other = app.ai.busy().is_some() && !busy;
+    let empty = blank(app);
+    let goes = where_it_goes(&app.ui.ai);
+    let (mut ask, mut close, mut stop, mut undo, mut setup) = (None, false, false, false, false);
+    let (outer, _) = ui.allocate_exact_size(vec2(ui.available_width(), BAR_HEIGHT), Sense::hover());
+    ui.painter().line_segment([outer.left_top(), outer.right_top()], Stroke::new(1.0, t.border));
+    let inner = outer.shrink2(vec2(16.0, 8.0));
+    let mut ui = ui.new_child(egui::UiBuilder::new().max_rect(inner).layout(egui::Layout::top_down(egui::Align::Min)));
+    let ui = &mut ui;
+    ui.spacing_mut().item_spacing = vec2(6.0, 6.0);
+    let Some(state) = app.ai.bar.as_mut() else { return };
+    egui::Frame::NONE
+        .fill(t.panel)
+        .stroke(Stroke::new(1.0, if busy { t.accent } else { t.input_border }))
+        .corner_radius(18)
+        .inner_margin(egui::Margin::symmetric(10, 4))
+        .show(ui, |ui| {
+            ui.horizontal(|ui| {
+                ui.set_height(28.0);
+                let (mark, _) = ui.allocate_exact_size(vec2(18.0, 18.0), Sense::hover());
+                crate::icons::paint(ui.painter(), mark, "edit", t.accent, t.accent);
+                if !ready {
+                    ui.label(egui::RichText::new(tl!("Writing help isn't set up yet.")).color(t.text_dim));
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        close = crate::widgets::icon_button(ui, "close", tl!("Close"), 14.0, true).clicked();
+                        setup = primary_button(ui, tl!("Set Up"), true).clicked();
+                    });
+                    return;
+                }
+                if busy {
+                    ui.spinner();
+                    ui.label(egui::RichText::new(tl!("Writing…")).color(t.text_dim));
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        stop = plain_button(ui, tl!("Stop")).clicked();
+                    });
+                    return;
+                }
+                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                    close = crate::widgets::icon_button(ui, "close", tl!("Close"), 14.0, true).clicked();
+                    if state.wrote {
+                        undo = crate::widgets::icon_button(ui, "undo", tl!("Undo what was written"), 14.0, true).clicked();
+                    }
+                    let can = !state.text.trim().is_empty() && !other;
+                    let send = crate::widgets::icon_button(ui, "send", if empty { tl!("Write it") } else { tl!("Change it") }, 16.0, can);
+                    if send.clicked() && can {
+                        ask = Some(Wish::Typed);
+                    }
+                    let hint = if empty { tl!("Describe the message you want to write") } else { tl!("Describe the change you want") };
+                    let field = ui.add(
+                        egui::TextEdit::singleline(&mut state.text)
+                            .hint_text(hint)
+                            .frame(egui::Frame::NONE)
+                            .char_limit(ai::MAX_INSTRUCTIONS)
+                            .desired_width(f32::INFINITY),
+                    );
+                    if std::mem::take(&mut state.focus) {
+                        field.request_focus();
+                    }
+                    if field.lost_focus() && can && crate::keys::enter(ui.ctx(), ui.layer_id()) {
+                        ask = Some(Wish::Typed);
+                    }
+                    if (field.has_focus() || field.lost_focus()) && crate::keys::take_escape_any(ui.ctx(), ui.layer_id()) {
+                        close = true;
+                    }
+                });
+            });
+        });
+    ui.horizontal(|ui| {
+        ui.set_height(26.0);
+        if let Some(why) = state.said.as_deref() {
+            ui.label(egui::RichText::new(why).font(regular(12.0)).color(t.red));
+            return;
+        }
+        if ready && !busy && !empty {
+            for (action, name) in ready_changes() {
+                if chip(ui, &t, name, false).clicked() && !other {
+                    ask = Some(Wish::Ready(action));
+                }
+            }
+        }
+        if ready {
+            ui.add(egui::Label::new(egui::RichText::new(goes).font(regular(11.5)).color(t.text_dim)).truncate());
+        }
+    });
+    if stop {
+        app.ai.pending = None;
+        if let Some(bar) = app.ai.bar.as_mut() {
+            bar.target = None;
+            bar.focus = true;
+        }
+    }
+    if undo {
+        let _ = app.run("compose.undo", json!({}));
+        if let Some(bar) = app.ai.bar.as_mut() {
+            bar.wrote = false;
+        }
+    }
+    if let Some(wish) = ask {
+        ask_bar(app, wish);
+    }
+    if setup {
+        close_bar(app);
+        let _ = app.run("ui.onboarding", json!({"page": "ai"}));
+    } else if close {
+        close_bar(app);
     }
 }

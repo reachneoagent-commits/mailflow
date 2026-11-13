@@ -472,6 +472,44 @@ pub fn prompt(action: Action, settings: &Settings, text: &str, wish: &str) -> (S
     (system, user)
 }
 
+/// What is asked of a model to write a message from the owner's own description of it: the
+/// system prompt and the user message. The description is the owner's request; nothing else of
+/// the mailbox goes with it.
+pub fn draft_prompt(settings: &Settings, description: &str) -> (String, String) {
+    let mut system = String::from(
+        "You help someone write an email. They describe the message they want, and you write it for them, in their voice, as they would send it. \
+         Reply with the body of the email alone: no subject line, no introduction, no explanation, no quotation marks round it. \
+         Start with a greeting and end with a short sign-off. \
+         Do not invent facts, names, dates, times, prices or promises: where a detail is needed and was not given, put a short placeholder in square brackets, such as [name] or [date and time]. \
+         Plain text, with a blank line between paragraphs.",
+    );
+    system.push_str(match settings.tone {
+        Tone::Natural => "\nThe writer likes a natural, everyday tone.",
+        Tone::Friendly => "\nThe writer likes a friendly, warm tone.",
+        Tone::Professional => "\nThe writer likes a professional tone.",
+        Tone::Formal => "\nThe writer likes a formal tone.",
+        Tone::Direct => "\nThe writer likes a direct tone, with no padding.",
+    });
+    system.push_str(match settings.length {
+        Length::Concise => "\nKeep it short: a few sentences.",
+        Length::Balanced => "\nKeep it as short as the message allows.",
+        Length::Detailed => "\nIt may be fuller where that helps the reader.",
+    });
+    let language = clean(&settings.language, 60).replace('\n', " ");
+    if language.trim().is_empty() {
+        system.push_str("\nWrite in the language the description is in.");
+    } else {
+        system.push_str(&format!("\nWrite in {}.", language.trim()));
+    }
+    let own = clean(&settings.instructions, MAX_INSTRUCTIONS);
+    if !own.trim().is_empty() {
+        system.push_str("\n\nThe writer's standing preferences:\n");
+        system.push_str(own.trim());
+    }
+    let wish = clean(description, MAX_INSTRUCTIONS);
+    (system, format!("The email I want to write: {}", wish.trim()))
+}
+
 /// The part of a draft that help is given with when nothing is selected: what the owner wrote,
 /// without the signature under it (from a line that is `--`) and without a message quoted below
 /// (from the first line that starts with `>`, or a line that ends `wrote:`). The byte range in `body`.

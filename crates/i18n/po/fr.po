@@ -1220,6 +1220,11 @@ msgstr[1] ""
 msgid "Another mailbox was opened: the import stopped."
 msgstr ""
 
+#. interface
+#: crates/ui-egui/src/ai_ui.rs
+msgid "Another message was opened meanwhile, so what was written wasn't put in."
+msgstr ""
+
 #. interface, what a command says
 #: crates/engine/src/cmd/calendar.rs crates/ui-egui/src/meeting_dialogs.rs
 #, fuzzy
@@ -1540,6 +1545,11 @@ msgstr "Redemander avant de télécharger les images des expéditeurs de ce doma
 #, fuzzy
 msgid "Ask before downloading this sender's pictures again"
 msgstr "Redemander avant de télécharger les images de cet expéditeur"
+
+#. interface
+#: crates/ui-egui/src/text_menu.rs
+msgid "Ask for a Change…"
+msgstr ""
 
 #. interface
 #: crates/ui-egui/src/backstage.rs
@@ -2272,6 +2282,11 @@ msgstr "Modifier les paramètres du compte"
 #: crates/ui-egui/src/account_setup.rs
 msgid "Change email address"
 msgstr "Modifier l’adresse e-mail"
+
+#. interface
+#: crates/ui-egui/src/ai_ui.rs
+msgid "Change it"
+msgstr ""
 
 #. interface
 #: crates/ui-egui/src/widgets.rs
@@ -3510,6 +3525,16 @@ msgid "Department"
 msgstr "Service"
 
 #. interface
+#: crates/ui-egui/src/ai_ui.rs
+msgid "Describe the change you want"
+msgstr ""
+
+#. interface
+#: crates/ui-egui/src/ai_ui.rs
+msgid "Describe the message you want to write"
+msgstr ""
+
+#. interface
 #: crates/ui-egui/src/forms.rs crates/ui-egui/src/signatures.rs
 #, fuzzy
 msgid "Description"
@@ -4584,8 +4609,8 @@ msgid ""
 "Grammar"
 msgstr ""
 
-#. name
-#: crates/model/src/ai.rs
+#. interface, name
+#: crates/model/src/ai.rs crates/ui-egui/src/text_menu.rs
 msgid "Fix Grammar"
 msgstr ""
 
@@ -4783,8 +4808,8 @@ msgstr ""
 msgid "Forget the pictures that are kept; they are downloaded again when you ask."
 msgstr "Oublier les images conservées ; elles seront de nouveau téléchargées à votre demande."
 
-#. name
-#: crates/model/src/ai.rs
+#. interface, name
+#: crates/model/src/ai.rs crates/ui-egui/src/ai_ui.rs
 msgid "Formal"
 msgstr ""
 
@@ -4903,8 +4928,8 @@ msgstr "ven."
 msgid "Friday"
 msgstr "vendredi"
 
-#. name
-#: crates/model/src/ai.rs
+#. interface, name
+#: crates/model/src/ai.rs crates/ui-egui/src/ai_ui.rs
 msgid "Friendly"
 msgstr ""
 
@@ -7021,6 +7046,16 @@ msgstr ""
 #. interface
 #: crates/ui-egui/src/onboarding.rs
 msgid "Mailflow can rewrite, shorten or tidy what you write, when you ask it to. It is optional: mail works the same without it, and you can set it up later."
+msgstr ""
+
+#. interface
+#: crates/ui-egui/src/text_menu.rs
+msgid "Make It Friendlier"
+msgstr ""
+
+#. interface
+#: crates/ui-egui/src/text_menu.rs
+msgid "Make It More Formal"
 msgstr ""
 
 #. interface
@@ -9518,6 +9553,11 @@ msgstr "Pointez sur l'une d'elles pour savoir pourquoi."
 msgid "Policy"
 msgstr ""
 
+#. interface
+#: crates/ui-egui/src/ai_ui.rs
+msgid "Polish"
+msgstr ""
+
 #. ribbon
 #: crates/ui-egui/src/ribbon.rs
 msgid ""
@@ -9544,6 +9584,11 @@ msgstr ""
 #. interface
 #: crates/ui-egui/src/attachment_preview.rs
 msgid "Preparing attachment preview…"
+msgstr ""
+
+#. interface
+#: crates/ui-egui/src/compose/editor.rs
+msgid "Press / to write with AI"
 msgstr ""
 
 #. interface
@@ -10423,8 +10468,8 @@ msgstr ""
 msgid "Revocation:"
 msgstr ""
 
-#. name, ribbon
-#: crates/model/src/ai.rs crates/ui-egui/src/ribbon.rs
+#. interface, name, ribbon
+#: crates/model/src/ai.rs crates/ui-egui/src/ribbon.rs crates/ui-egui/src/text_menu.rs
 msgid "Rewrite"
 msgstr ""
 
@@ -11500,6 +11545,11 @@ msgstr ""
 
 #. interface
 #: crates/ui-egui/src/ai_ui.rs
+msgid "Set Up"
+msgstr ""
+
+#. interface
+#: crates/ui-egui/src/ai_ui.rs
 msgid "Set Up Writing Help"
 msgstr ""
 
@@ -11579,6 +11629,11 @@ msgstr "Les boîtes aux lettres partagées n'ont pas été autorisées : {erro
 #. interface
 #: crates/ui-egui/src/shared_calendars.rs
 msgid "Shared mailboxes' calendars weren't allowed: {error}"
+msgstr ""
+
+#. interface
+#: crates/ui-egui/src/ai_ui.rs crates/ui-egui/src/text_menu.rs
+msgid "Shorten"
 msgstr ""
 
 #. ribbon location
@@ -12345,7 +12400,7 @@ msgid "Stillwater"
 msgstr ""
 
 #. interface
-#: crates/ui-egui/src/sync_panel.rs
+#: crates/ui-egui/src/ai_ui.rs crates/ui-egui/src/sync_panel.rs
 #, fuzzy
 msgid "Stop"
 msgstr "Arrêter"
@@ -13194,6 +13249,11 @@ msgid "The draft changed while the suggestion was written, so it wasn't put in."
 msgstr ""
 
 #. interface
+#: crates/ui-egui/src/ai_ui.rs
+msgid "The draft changed while this was written, so it wasn't put in."
+msgstr ""
+
+#. interface
 #: crates/ui-egui/src/lib.rs
 msgid "The draft stays in Drafts. {why}"
 msgstr ""
@@ -13983,6 +14043,11 @@ msgstr "Le Presse-papiers ne contient pas d'image."
 #, fuzzy
 msgid "There is no such account"
 msgstr "Ce compte n'existe pas"
+
+#. interface
+#: crates/ui-egui/src/ai_ui.rs
+msgid "There is no text to work on yet: write something first."
+msgstr ""
 
 #. interface
 #: crates/ui-egui/src/reading/signature.rs
@@ -15246,6 +15311,11 @@ msgid "Undo Typing"
 msgstr "Annuler la frappe"
 
 #. interface
+#: crates/ui-egui/src/ai_ui.rs
+msgid "Undo what was written"
+msgstr ""
+
+#. interface
 #: crates/ui-egui/src/chrome.rs
 #, fuzzy
 msgid "Undo {what}"
@@ -15873,6 +15943,18 @@ msgstr ""
 
 #. ribbon
 #: crates/ui-egui/src/ribbon.rs
+msgid ""
+"Write\n"
+"with AI"
+msgstr ""
+
+#. interface
+#: crates/ui-egui/src/ai_ui.rs
+msgid "Write it"
+msgstr ""
+
+#. ribbon
+#: crates/ui-egui/src/ribbon.rs
 msgid "Write to the organizer without answering"
 msgstr ""
 
@@ -15881,6 +15963,11 @@ msgstr ""
 #, fuzzy
 msgid "Write to {address}"
 msgstr "Écrire à {address}"
+
+#. command label, interface
+#: crates/ui-egui/src/compose.rs crates/ui-egui/src/lib.rs
+msgid "Write with AI"
+msgstr ""
 
 #. interface
 #: crates/ui-egui/src/compose/editor.rs
@@ -15912,6 +15999,11 @@ msgstr ""
 #. interface
 #: crates/ui-egui/src/onboarding.rs
 msgid "Writing help follows these. All optional, and all can be changed later."
+msgstr ""
+
+#. interface
+#: crates/ui-egui/src/ai_ui.rs
+msgid "Writing help isn't set up yet."
 msgstr ""
 
 #. interface

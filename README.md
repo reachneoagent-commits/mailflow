@@ -27,6 +27,7 @@ Mailflow is a native desktop mail program: mail, calendar, people and tasks in o
 - **A guided setup** on first start: connect your email, set up help with writing, choose a look. Every section has its own Skip, and what you skipped waits in a "Finish setting up" card
 - **Six colour themes**, each in light and dark: Mailflow, Ember, Evergreen, Stillwater, Rosé Pine and Graphite, all checked for readable contrast
 - **Help with writing** while you write a message: Rewrite, Humanize, Fix Grammar, Professional, Friendly, Concise, Elaborate, Improve Clarity, or your own instruction. You see your text and the suggestion side by side, and nothing changes until you accept it; Undo brings your own words back
+- **Write with AI**: press `/` in an empty message (or click Write with AI) and describe the email you want; it is written into the draft, with placeholders for details you did not give. On a message with text, describe a change or use Polish, Formal, Friendly or Shorten. Right-click selected text for the same help on just that part
 - **Writing preferences**: tone, length, language and your own standing instructions
 - **Your key stays yours**: API keys go in the macOS Keychain or Windows Credential Manager, never in a settings file
 
@@ -49,14 +50,14 @@ With Ollama, Mailflow can have it fetch a small starter model (Qwen2.5 0.5B, abo
 
 **Easiest:** install and update it with the [FlowApps launcher](https://github.com/reachneoagent-commits/FlowApps-Launcher/releases/latest), one app that also manages Gramflow, Voxflow and Mailflow on Mac and Windows. Or download an installer yourself below.
 
-Download the installer for your system (latest version, 0.12.0), then follow the steps for your system below.
+Download the installer for your system (latest version, 0.12.1), then follow the steps for your system below.
 
 | Platform | Installer |
 |---|---|
-| Windows x64 | [Installer](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.0/mailflow-0.12.0-windows-x64.msi) · [portable zip](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.0/mailflow-0.12.0-windows-x64-portable.zip) |
-| Windows ARM64 | [Installer](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.0/mailflow-0.12.0-windows-arm64.msi) · [portable zip](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.0/mailflow-0.12.0-windows-arm64-portable.zip) |
-| macOS Apple Silicon (M1 or newer) | [DMG](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.0/mailflow-0.12.0-macos-universal.dmg) |
-| macOS Intel | [DMG](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.0/mailflow-0.12.0-macos-universal.dmg) |
+| Windows x64 | [Installer](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.1/mailflow-0.12.1-windows-x64.msi) · [portable zip](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.1/mailflow-0.12.1-windows-x64-portable.zip) |
+| Windows ARM64 | [Installer](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.1/mailflow-0.12.1-windows-arm64.msi) · [portable zip](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.1/mailflow-0.12.1-windows-arm64-portable.zip) |
+| macOS Apple Silicon (M1 or newer) | [DMG](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.1/mailflow-0.12.1-macos-universal.dmg) |
+| macOS Intel | [DMG](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.1/mailflow-0.12.1-macos-universal.dmg) |
 
 Older versions are on the [Releases page](https://github.com/reachneoagent-commits/mailflow/releases).
 

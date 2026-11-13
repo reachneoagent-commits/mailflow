@@ -40,6 +40,8 @@ enum Item {
     Copy,
     Paste,
     SelectAll,
+    /// Mailflow: help with writing, on what is selected in a message's text.
+    Write(mailcraft_model::ai::Action),
 }
 
 /// What a text takes from the clipboard besides text.
@@ -165,7 +167,7 @@ pub(crate) fn menu_item(ui: &mut Ui, enabled: bool, label: &str, key: &str) -> R
 
 /// The items for a text of `kind`, `selected` whether anything is selected in it, `paste`
 /// whether there is a clipboard to paste from. What was chosen; the menu shuts then.
-fn items(ui: &mut Ui, kind: Kind, selected: bool, paste: bool) -> (Option<Item>, bool) {
+fn items(ui: &mut Ui, kind: Kind, selected: bool, paste: bool, writing: bool) -> (Option<Item>, bool) {
     let (mut chosen, mut keyboard) = (None, false);
     let edits = kind == Kind::Text;
     let shown = [
@@ -184,6 +186,26 @@ fn items(ui: &mut Ui, kind: Kind, selected: bool, paste: bool) -> (Option<Item>,
             chosen = Some(item);
         }
     }
+    // Mailflow: help with writing on what is selected, once it is set up.
+    if writing {
+        use mailcraft_model::ai::Action;
+        ui.separator();
+        let offered = [
+            (Action::Rewrite, tl!("Rewrite")),
+            (Action::Grammar, tl!("Fix Grammar")),
+            (Action::Concise, tl!("Shorten")),
+            (Action::Friendly, tl!("Make It Friendlier")),
+            (Action::Professional, tl!("Make It More Formal")),
+            (Action::Custom, tl!("Ask for a Change…")),
+        ];
+        for (action, label) in offered {
+            let resp = menu_item(ui, selected, label, "");
+            keyboard |= resp.has_focus();
+            if resp.clicked() {
+                chosen = Some(Item::Write(action));
+            }
+        }
+    }
     if chosen.is_some() {
         ui.close();
     }
@@ -196,7 +218,7 @@ fn items(ui: &mut Ui, kind: Kind, selected: bool, paste: bool) -> (Option<Item>,
 /// closes it, and nothing under it). A text in a drop-down or a menu, which is that popup already,
 /// has its menu as a submenu of it instead: open by its own note ([`Nested`]), and counted by the
 /// drop-down as one of its own (`MenuState`), so that neither closes the other.
-fn menu(resp: &Response, kind: Kind, selected: bool, takes: Takes) {
+fn menu(resp: &Response, kind: Kind, selected: bool, takes: Takes, writing: bool) {
     let ctx = &resp.ctx;
     let id = Popup::default_response_id(resp);
     let pass = ctx.cumulative_pass_nr();
@@ -223,14 +245,14 @@ fn menu(resp: &Response, kind: Kind, selected: bool, takes: Takes) {
             if crate::keys::list_escape(ctx) && ctx.input_mut(|i| i.consume_key(Modifiers::NONE, Key::Escape)) {
                 n.open = false;
             }
-            Popup::menu(resp).open_bool(&mut n.open).at_position(at).show(|ui| (chosen, keyboard) = items(ui, kind, selected, paste));
+            Popup::menu(resp).open_bool(&mut n.open).at_position(at).show(|ui| (chosen, keyboard) = items(ui, kind, selected, paste, writing));
             if n.open {
                 MenuState::from_id(ctx, resp.layer_id.id, |state| state.open_item = Some(id));
             }
             n.open
         }
         None => {
-            Popup::context_menu(resp).show(|ui| (chosen, keyboard) = items(ui, kind, selected, paste));
+            Popup::context_menu(resp).show(|ui| (chosen, keyboard) = items(ui, kind, selected, paste, writing));
             Popup::is_id_open(ctx, id)
         }
     };
@@ -354,15 +376,16 @@ fn attach(resp: Response, kind: Kind) -> Response {
     {
         ctx.data_mut(|d| d.insert_temp(kept(resp.id), now));
     }
-    menu(&resp, kind, range.is_some_and(|r| !r.is_empty()), Takes::Text);
+    menu(&resp, kind, range.is_some_and(|r| !r.is_empty()), Takes::Text, false);
     resp
 }
 
 /// The body of a message being written, or a signature being edited, `resp`, with the menu;
 /// `selected`: whether anything is selected in it; `takes`: what a paste brings into it. (Where a
 /// right click puts the caret is the body's own.)
-pub(crate) fn body(resp: &Response, selected: bool, takes: Takes) {
-    menu(resp, Kind::Text, selected, takes);
+/// `writing`: help with writing is offered on what is selected (a message, once it is set up).
+pub(crate) fn body(resp: &Response, selected: bool, takes: Takes, writing: bool) {
+    menu(resp, Kind::Text, selected, takes, writing);
 }
 
 /// What was chosen this pass becomes its input, for [`deliver`]. The extra pass asked for runs in
@@ -377,6 +400,10 @@ pub(crate) fn carry_out(app: &mut MailApp, ctx: &Context) {
     }
     let Some(asked) = ctx.data(|d| d.get_temp::<Asked>(asked())) else { return };
     ctx.data_mut(|d| d.remove::<Asked>(self::asked()));
+    if let Item::Write(action) = asked.item {
+        crate::ai_ui::from_menu(app, action);
+        return;
+    }
     // What the control channel's input chose gives the text the keyboard back, and no more.
     let refused = app.driven && asked.item != Item::SelectAll;
     let events = match asked.item {
@@ -391,6 +418,7 @@ pub(crate) fn carry_out(app: &mut MailApp, ctx: &Context) {
             None,
         ),
         Item::Paste => paste(app, asked.takes),
+        Item::Write(_) => (Vec::new(), None),
     };
     let (events, captured) = events;
     let pending = Pending { viewport: asked.viewport, target: asked.target, takes: asked.takes, events, captured, pass };

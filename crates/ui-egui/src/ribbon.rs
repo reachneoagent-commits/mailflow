@@ -911,6 +911,7 @@ fn review() -> Tab {
         g(
             "Writing Help",
             vec![
+                Item::big("newMail", "Write\nwith AI", "ui.aiDraft", no()).key("review.aiDraft").at(0, 1),
                 Item::big("edit", "Rewrite", "ui.aiAssist", json!({"action": "rewrite"})).key("review.aiRewrite").at(0, 1),
                 Item::big("check", "Fix\nGrammar", "ui.aiAssist", json!({"action": "grammar"})).key("review.aiGrammar").at(0, 2),
                 Item::big("people", "Humanize", "ui.aiAssist", json!({"action": "humanize"})).key("review.aiHumanize").at(0, 3),

@@ -1265,6 +1265,11 @@ msgstr[1] "En nog {n} dergelijke koppelingen."
 msgid "Another mailbox was opened: the import stopped."
 msgstr "Er werd een ander postvak geopend: de import werd gestopt."
 
+#. interface
+#: crates/ui-egui/src/ai_ui.rs
+msgid "Another message was opened meanwhile, so what was written wasn't put in."
+msgstr ""
+
 #. interface, what a command says
 #: crates/engine/src/cmd/calendar.rs crates/ui-egui/src/meeting_dialogs.rs
 #, fuzzy
@@ -1596,6 +1601,11 @@ msgstr "Opnieuw vragen voordat afbeeldingen van afzenders van dit domein worden 
 #, fuzzy
 msgid "Ask before downloading this sender's pictures again"
 msgstr "Opnieuw vragen voordat afbeeldingen van deze afzender worden gedownload"
+
+#. interface
+#: crates/ui-egui/src/text_menu.rs
+msgid "Ask for a Change…"
+msgstr ""
 
 #. interface
 #: crates/ui-egui/src/backstage.rs
@@ -2395,6 +2405,11 @@ msgstr "Accountinstellingen wijzigen"
 #, fuzzy
 msgid "Change email address"
 msgstr "Wijzig e-mailadres"
+
+#. interface
+#: crates/ui-egui/src/ai_ui.rs
+msgid "Change it"
+msgstr ""
 
 #. interface
 #: crates/ui-egui/src/widgets.rs
@@ -3673,6 +3688,16 @@ msgid "Department"
 msgstr "Afdeling"
 
 #. interface
+#: crates/ui-egui/src/ai_ui.rs
+msgid "Describe the change you want"
+msgstr ""
+
+#. interface
+#: crates/ui-egui/src/ai_ui.rs
+msgid "Describe the message you want to write"
+msgstr ""
+
+#. interface
 #: crates/ui-egui/src/forms.rs crates/ui-egui/src/signatures.rs
 #, fuzzy
 msgid "Description"
@@ -4804,8 +4829,8 @@ msgid ""
 "Grammar"
 msgstr ""
 
-#. name
-#: crates/model/src/ai.rs
+#. interface, name
+#: crates/model/src/ai.rs crates/ui-egui/src/text_menu.rs
 msgid "Fix Grammar"
 msgstr ""
 
@@ -5009,8 +5034,8 @@ msgstr "Vertrouwd certificaat vergeten"
 msgid "Forget the pictures that are kept; they are downloaded again when you ask."
 msgstr "De bewaarde afbeeldingen vergeten; ze worden opnieuw gedownload wanneer u erom vraagt."
 
-#. name
-#: crates/model/src/ai.rs
+#. interface, name
+#: crates/model/src/ai.rs crates/ui-egui/src/ai_ui.rs
 msgid "Formal"
 msgstr ""
 
@@ -5136,8 +5161,8 @@ msgstr "vr"
 msgid "Friday"
 msgstr "vrijdag"
 
-#. name
-#: crates/model/src/ai.rs
+#. interface, name
+#: crates/model/src/ai.rs crates/ui-egui/src/ai_ui.rs
 msgid "Friendly"
 msgstr ""
 
@@ -7382,6 +7407,16 @@ msgstr ""
 #. interface
 #: crates/ui-egui/src/onboarding.rs
 msgid "Mailflow can rewrite, shorten or tidy what you write, when you ask it to. It is optional: mail works the same without it, and you can set it up later."
+msgstr ""
+
+#. interface
+#: crates/ui-egui/src/text_menu.rs
+msgid "Make It Friendlier"
+msgstr ""
+
+#. interface
+#: crates/ui-egui/src/text_menu.rs
+msgid "Make It More Formal"
 msgstr ""
 
 #. interface
@@ -9980,6 +10015,11 @@ msgstr "Plaats de aanwijzer op een ervan om te zien waarom."
 msgid "Policy"
 msgstr "Beleid"
 
+#. interface
+#: crates/ui-egui/src/ai_ui.rs
+msgid "Polish"
+msgstr ""
+
 #. ribbon
 #: crates/ui-egui/src/ribbon.rs
 #, fuzzy
@@ -10011,6 +10051,11 @@ msgstr "Voorkeuren"
 #. interface
 #: crates/ui-egui/src/attachment_preview.rs
 msgid "Preparing attachment preview…"
+msgstr ""
+
+#. interface
+#: crates/ui-egui/src/compose/editor.rs
+msgid "Press / to write with AI"
 msgstr ""
 
 #. interface
@@ -10935,8 +10980,8 @@ msgstr "Intrekking niet gecontroleerd."
 msgid "Revocation:"
 msgstr "Intrekking:"
 
-#. name, ribbon
-#: crates/model/src/ai.rs crates/ui-egui/src/ribbon.rs
+#. interface, name, ribbon
+#: crates/model/src/ai.rs crates/ui-egui/src/ribbon.rs crates/ui-egui/src/text_menu.rs
 msgid "Rewrite"
 msgstr ""
 
@@ -12057,6 +12102,11 @@ msgstr "Server: {address}"
 
 #. interface
 #: crates/ui-egui/src/ai_ui.rs
+msgid "Set Up"
+msgstr ""
+
+#. interface
+#: crates/ui-egui/src/ai_ui.rs
 msgid "Set Up Writing Help"
 msgstr ""
 
@@ -12142,6 +12192,11 @@ msgstr "Gedeelde postvakken waren niet toegestaan: {error}"
 #, fuzzy
 msgid "Shared mailboxes' calendars weren't allowed: {error}"
 msgstr "Agenda's van gedeelde postvakken waren niet toegestaan: {error}"
+
+#. interface
+#: crates/ui-egui/src/ai_ui.rs crates/ui-egui/src/text_menu.rs
+msgid "Shorten"
+msgstr ""
 
 #. ribbon location
 #: crates/engine/src/cmd/calendar/share.rs
@@ -12947,7 +13002,7 @@ msgid "Stillwater"
 msgstr ""
 
 #. interface
-#: crates/ui-egui/src/sync_panel.rs
+#: crates/ui-egui/src/ai_ui.rs crates/ui-egui/src/sync_panel.rs
 #, fuzzy
 msgid "Stop"
 msgstr "Stoppen"
@@ -13864,6 +13919,11 @@ msgid "The draft changed while the suggestion was written, so it wasn't put in."
 msgstr ""
 
 #. interface
+#: crates/ui-egui/src/ai_ui.rs
+msgid "The draft changed while this was written, so it wasn't put in."
+msgstr ""
+
+#. interface
 #: crates/ui-egui/src/lib.rs
 #, fuzzy
 msgid "The draft stays in Drafts. {why}"
@@ -14711,6 +14771,11 @@ msgstr "Er staat geen afbeelding op het klembord."
 #, fuzzy
 msgid "There is no such account"
 msgstr "Er is niet zo'n account"
+
+#. interface
+#: crates/ui-egui/src/ai_ui.rs
+msgid "There is no text to work on yet: write something first."
+msgstr ""
 
 #. interface
 #: crates/ui-egui/src/reading/signature.rs
@@ -16046,6 +16111,11 @@ msgid "Undo Typing"
 msgstr "Typen ongedaan maken"
 
 #. interface
+#: crates/ui-egui/src/ai_ui.rs
+msgid "Undo what was written"
+msgstr ""
+
+#. interface
 #: crates/ui-egui/src/chrome.rs
 #, fuzzy
 msgid "Undo {what}"
@@ -16707,6 +16777,18 @@ msgstr "Offline: e-mail die u verzendt, wacht in het Postvak UIT"
 
 #. ribbon
 #: crates/ui-egui/src/ribbon.rs
+msgid ""
+"Write\n"
+"with AI"
+msgstr ""
+
+#. interface
+#: crates/ui-egui/src/ai_ui.rs
+msgid "Write it"
+msgstr ""
+
+#. ribbon
+#: crates/ui-egui/src/ribbon.rs
 #, fuzzy
 msgid "Write to the organizer without answering"
 msgstr "De organisator schrijven zonder te antwoorden"
@@ -16716,6 +16798,11 @@ msgstr "De organisator schrijven zonder te antwoorden"
 #, fuzzy
 msgid "Write to {address}"
 msgstr "Schrijven aan {address}"
+
+#. command label, interface
+#: crates/ui-egui/src/compose.rs crates/ui-egui/src/lib.rs
+msgid "Write with AI"
+msgstr ""
 
 #. interface
 #: crates/ui-egui/src/compose/editor.rs
@@ -16747,6 +16834,11 @@ msgstr ""
 #. interface
 #: crates/ui-egui/src/onboarding.rs
 msgid "Writing help follows these. All optional, and all can be changed later."
+msgstr ""
+
+#. interface
+#: crates/ui-egui/src/ai_ui.rs
+msgid "Writing help isn't set up yet."
 msgstr ""
 
 #. interface

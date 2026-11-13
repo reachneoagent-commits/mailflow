@@ -1170,6 +1170,7 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
         "Review › Writing Help",
         r#"{"action"?: "rewrite"|"humanize"|"grammar"|"professional"|"friendly"|"concise"|"elaborate"|"clarity"|"custom"}"#,
     ),
+    ("ui.aiDraft", "Write with AI", "Review › Writing Help", r#"{"open"?: bool}"#),
     (
         "ui.onboarding",
         "Run Setup",
@@ -2676,6 +2677,7 @@ impl MailApp {
             // Mailflow: help with writing: its settings, and its window. Neither sends anything.
             "ui.ai" => ai_ui::command(self, p),
             "ui.aiAssist" => ai_ui::open_assist(self, p),
+            "ui.aiDraft" => ai_ui::open_bar(self, p),
             "ui.language" => {
                 let code = s("language").unwrap_or_default();
                 let lang = i18n::Lang::from_code(code);

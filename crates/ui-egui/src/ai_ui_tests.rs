@@ -254,3 +254,113 @@ fn every_page_of_help_lays_out_light_and_dark_and_narrow() {
         }
     }
 }
+
+fn own(a: &MailApp) -> String {
+    a.session.compose.as_ref().unwrap().body.plain()
+}
+
+#[test]
+fn the_bar_opens_on_a_message_and_sends_nothing_by_itself() {
+    let (mut a, calls) = app_with(Ok("x"));
+    ready(&mut a);
+    assert!(a.execute("ui.aiDraft", json!({})).is_err(), "nothing is being written");
+    a.execute("mail.new", json!({})).unwrap();
+    for junk in [json!({"open": "yes"}), json!({"open": 1})] {
+        assert!(a.execute("ui.aiDraft", junk).is_err());
+    }
+    let said = a.execute("ui.aiDraft", json!({})).unwrap();
+    assert_eq!((said["open"].as_bool(), said["ready"].as_bool()), (Some(true), Some(true)));
+    assert!(crate::ai_ui::bar_height(&a) > 0.0 && crate::ai_ui::blank(&a));
+    assert!(calls.lock().unwrap().is_empty(), "opening it asks nobody for anything");
+    // Nothing typed: nothing to send.
+    crate::ai_ui::ask_bar(&mut a, crate::ai_ui::Wish::Typed);
+    assert!(calls.lock().unwrap().is_empty());
+    a.execute("ui.aiDraft", json!({"open": false})).unwrap();
+    assert!(a.ai.bar.is_none() && crate::ai_ui::bar_height(&a) == 0.0);
+}
+
+#[test]
+fn a_described_message_is_written_into_the_draft_and_undo_takes_it_back() {
+    let (mut a, calls) = app_with(Ok("Hi [name],\n\nCould we meet on Tuesday?\n\nThanks"));
+    ready(&mut a);
+    a.execute("mail.new", json!({})).unwrap();
+    let before = own(&a);
+    a.execute("ui.aiDraft", json!({})).unwrap();
+    a.ai.bar.as_mut().unwrap().text = "ask for a meeting on Tuesday".into();
+    crate::ai_ui::ask_bar(&mut a, crate::ai_ui::Wish::Typed);
+    assert_eq!(a.ai.busy(), Some(Purpose::Bar));
+    {
+        let calls = calls.lock().unwrap();
+        let Job::Chat { system, user } = &calls[0].job else { panic!("a chat") };
+        assert!(system.contains("square brackets") && user.ends_with("ask for a meeting on Tuesday"), "{system} / {user}");
+    }
+    crate::ai_ui::poll(&mut a);
+    let body = own(&a);
+    assert!(body.starts_with("Hi [name],") && body.contains("Could we meet on Tuesday?"), "{body:?}");
+    let bar = a.ai.bar.as_ref().unwrap();
+    assert!(bar.wrote && bar.text.is_empty() && bar.said.is_none());
+    a.execute("compose.undo", json!({})).unwrap();
+    assert_eq!(own(&a), before);
+}
+
+#[test]
+fn the_bar_changes_what_is_written_as_asked_or_by_a_ready_change() {
+    let (mut a, calls) = app_with(Ok("Shorter."));
+    ready(&mut a);
+    draft(&mut a, "A rather long line that goes on.");
+    a.execute("ui.aiDraft", json!({})).unwrap();
+    crate::ai_ui::ask_bar(&mut a, crate::ai_ui::Wish::Ready(mailcraft_model::ai::Action::Concise));
+    crate::ai_ui::poll(&mut a);
+    assert!(own(&a).starts_with("Shorter."), "{:?}", own(&a));
+    a.ai.bar.as_mut().unwrap().text = "say it is about the invoice".into();
+    crate::ai_ui::ask_bar(&mut a, crate::ai_ui::Wish::Typed);
+    let calls = calls.lock().unwrap();
+    let Job::Chat { user, .. } = &calls[1].job else { panic!("a chat") };
+    assert!(user.contains("What I want changed: say it is about the invoice") && user.contains("Shorter."), "{user}");
+}
+
+#[test]
+fn the_bar_leaves_a_draft_that_changed_meanwhile_and_says_why_a_request_failed() {
+    let (mut a, _) = app_with(Ok("Suggestion"));
+    ready(&mut a);
+    draft(&mut a, "First version.");
+    a.execute("ui.aiDraft", json!({})).unwrap();
+    crate::ai_ui::ask_bar(&mut a, crate::ai_ui::Wish::Ready(mailcraft_model::ai::Action::Rewrite));
+    a.execute("compose.select", json!({"from": 0, "to": 5})).unwrap();
+    a.execute("compose.type", json!({"text": "Second"})).unwrap();
+    crate::ai_ui::poll(&mut a);
+    assert!(own(&a).starts_with("Second version."), "{:?}", own(&a));
+    assert!(a.ai.bar.as_ref().unwrap().said.is_some());
+
+    let (mut a, _) = app_with(Err(Failure::RateLimited));
+    ready(&mut a);
+    draft(&mut a, "A line.");
+    a.execute("ui.aiDraft", json!({})).unwrap();
+    crate::ai_ui::ask_bar(&mut a, crate::ai_ui::Wish::Ready(mailcraft_model::ai::Action::Rewrite));
+    crate::ai_ui::poll(&mut a);
+    assert!(own(&a).starts_with("A line.") && a.ai.bar.as_ref().unwrap().said.is_some());
+}
+
+#[test]
+fn a_choice_in_the_texts_menu_asks_at_once_but_not_for_injected_input() {
+    let (mut a, calls) = app_with(Ok("Better."));
+    ready(&mut a);
+    draft(&mut a, "Keep this. Change that.");
+    a.execute("compose.select", json!({"from": 11, "to": 23})).unwrap();
+    crate::ai_ui::from_menu(&mut a, mailcraft_model::ai::Action::Rewrite);
+    assert_eq!(calls.lock().unwrap().len(), 1, "the owner chose it: it is asked for");
+    crate::ai_ui::poll(&mut a);
+    let assist = a.ai.assist.clone().unwrap();
+    assert_eq!((assist.original.as_str(), assist.result), ("Change that.", Some(Ok("Better.".to_string()))));
+    assert!(own(&a).starts_with("Keep this. Change that."), "nothing changes until the owner accepts");
+    // Asking for a change in one's own words waits for the words.
+    a.ai.assist = None;
+    crate::ai_ui::from_menu(&mut a, mailcraft_model::ai::Action::Custom);
+    assert_eq!(calls.lock().unwrap().len(), 1);
+    // Input the control channel injected opens the window and sends nothing.
+    a.ai.assist = None;
+    a.driven = true;
+    crate::ai_ui::from_menu(&mut a, mailcraft_model::ai::Action::Rewrite);
+    assert!(a.ai.assist.is_some());
+    assert_eq!(calls.lock().unwrap().len(), 1);
+}

@@ -204,3 +204,15 @@ fn model_lists_are_read_from_either_shape_sorted_and_bounded() {
         Err(Failure::Refused("pull model manifest: file does not exist".into()))
     );
 }
+
+#[test]
+fn a_message_is_drafted_from_the_owners_description_and_their_preferences() {
+    let settings = Settings { tone: Tone::Formal, language: "German".into(), instructions: "Sign as Sam.".into(), ..Settings::default() };
+    let (system, user) = draft_prompt(&settings, "  ask the plumber for Tuesday  ");
+    assert!(system.contains("square brackets") && system.contains("no subject line"), "{system}");
+    assert!(system.contains("formal tone") && system.contains("Write in German.") && system.contains("Sign as Sam."), "{system}");
+    assert_eq!(user, "The email I want to write: ask the plumber for Tuesday");
+    // A description is capped as the owner's instructions are.
+    let (_, long) = draft_prompt(&Settings::default(), &"x".repeat(MAX_INSTRUCTIONS * 3));
+    assert!(long.chars().count() <= MAX_INSTRUCTIONS + 40);
+}

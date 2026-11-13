@@ -677,6 +677,11 @@ pub(crate) fn show_doc(app: &mut MailApp, ui: &mut Ui, which: Which, min_height:
     let resp = ui.interact(rect, id, if editable { Sense::click_and_drag() } else { Sense::hover() });
     app.hit.add(if which == Which::Message { "composeBody" } else { "signatureBody" }, 0, rect);
     let origin = rect.min;
+    // Mailflow: an empty message says how to have it written, once help with writing is set up.
+    if which == Which::Message && editable && app.ui.ai.enabled && crate::ai_ui::bar_height(app) == 0.0 && crate::ai_ui::blank(app) {
+        let hint = tl!("Press / to write with AI");
+        ui.painter().text(origin + vec2(3.0, 1.0), egui::Align2::LEFT_TOP, hint, regular(BASE_SIZE), t.text_dim);
+    }
     let state_id = id.with("state");
     let mut st: State = ctx.data(|d| d.get_temp(state_id)).unwrap_or_default();
     // Changed since the last frame, by a command from elsewhere (an agent's or a script's
@@ -797,7 +802,8 @@ pub(crate) fn show_doc(app: &mut MailApp, ui: &mut Ui, which: Which, min_height:
         }
         // Both take pictures: a signature, and a message's text since #547.
         let takes = crate::text_menu::Takes::Pictures;
-        crate::text_menu::body(&resp, now(app, which).is_some_and(|(sel, _)| !sel.is_empty()), takes);
+        let writing = which == Which::Message && app.ui.ai.enabled;
+        crate::text_menu::body(&resp, now(app, which).is_some_and(|(sel, _)| !sel.is_empty()), takes, writing);
     }
 
     // The keyboard.
@@ -822,6 +828,11 @@ pub(crate) fn show_doc(app: &mut MailApp, ui: &mut Ui, which: Which, min_height:
             let Some((sel, plain)) = now(app, which) else { break };
             let asked = match event {
                 // (A space may start a list, #973: the engine looks at the paragraph.)
+                // Mailflow: `/` in a message with nothing written yet opens the bar that writes
+                // what the owner describes, once help with writing is set up.
+                Event::Text(text) if text == "/" && which == Which::Message && app.ui.ai.enabled && crate::ai_ui::blank(app) => {
+                    ask("ui.aiDraft", json!({}))
+                }
                 Event::Text(text) if text == " " => ask("compose.type", json!({"text": text, "autoList": true})),
                 Event::Text(text) if !text.is_empty() => ask("compose.type", json!({"text": text})),
                 Event::Ime(egui::ImeEvent::Commit(text)) => {

@@ -390,6 +390,8 @@ const SAFE: &[&str] = &[
     "ui.onboarding",
     // Mailflow: opens the Writing Help window; nothing is sent until the owner presses Generate.
     "ui.aiAssist",
+    // Mailflow: opens the bar under the message being written; nothing is sent until the owner presses its button.
+    "ui.aiDraft",
     "ui.lightMessages",
     "ui.language",
     "ui.interfaceSize",

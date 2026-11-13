@@ -274,7 +274,10 @@ pub(crate) fn show_in(app: &mut MailApp, ui: &mut Ui, window: Option<u64>, keybo
 
     // The body takes what is left: the owner's text, and under it the original of a reply or
     // forward in HTML, as the reading pane shows it.
-    egui::ScrollArea::vertical().auto_shrink([false, false]).id_salt("compose_body").show(ui, |ui| {
+    // (Mailflow: the bar that writes what the owner describes keeps its place under the text.)
+    let bar = crate::ai_ui::bar_height(app);
+    let tall = (ui.available_height() - bar).max(60.0);
+    egui::ScrollArea::vertical().auto_shrink([false, false]).max_height(tall).id_salt("compose_body").show(ui, |ui| {
         egui::Frame::NONE.inner_margin(egui::Margin { left: 16, right: 16, top: 10, bottom: 16 }).show(ui, |ui| {
             let below = c.quote || editor::unedited_html_signature(app).is_some();
             let room = if below { 8.0 * 19.0 } else { (ui.available_height() - 26.0).max(8.0 * 19.0) };
@@ -293,6 +296,7 @@ pub(crate) fn show_in(app: &mut MailApp, ui: &mut Ui, window: Option<u64>, keybo
             }
         });
     });
+    crate::ai_ui::bar(app, ui);
 }
 
 /// What the message is and its actions, over its lines in the reading pane: Send, Attach, Save
@@ -325,6 +329,13 @@ fn action_bar(app: &mut MailApp, ui: &mut Ui, c: &Shown, window: Option<u64>) {
         if crate::widgets::icon_text_button(ui, "discard", tl!("Discard"), true).clicked() {
             let _ = app.run("compose.discard", json!({}));
         }
+        // Mailflow: the bar that writes what the owner describes, once help with writing is set up.
+        if app.ui.ai.enabled {
+            let open = crate::ai_ui::bar_height(app) > 0.0;
+            if crate::widgets::icon_text_button(ui, "edit", tl!("Write with AI"), true).clicked() {
+                let _ = app.run("ui.aiDraft", json!({"open": !open}));
+            }
+        }
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
             // In the reading pane: Close, and Pop Out at the top right, which moves the message
             // into a window of its own (#286).
@@ -345,7 +356,17 @@ fn action_bar(app: &mut MailApp, ui: &mut Ui, c: &Shown, window: Option<u64>) {
             } else {
                 ""
             };
-            ui.label(egui::RichText::new(format!("{title}  {state}")).font(regular(11.5)).color(t.text_dim));
+            // (Left out when the actions leave no room for it, rather than drawn over them.)
+            let said = format!("{title}  {state}");
+            let wide = ui.ctx().fonts_mut(|f| f.layout_no_wrap(said.clone(), regular(11.5), t.text_dim).size().x);
+            if wide + 12.0 <= ui.available_width() {
+                ui.label(egui::RichText::new(said).font(regular(11.5)).color(t.text_dim));
+            } else {
+                let wide = ui.ctx().fonts_mut(|f| f.layout_no_wrap(state.to_string(), regular(11.5), t.text_dim).size().x);
+                if !state.is_empty() && wide + 12.0 <= ui.available_width() {
+                    ui.label(egui::RichText::new(state).font(regular(11.5)).color(t.text_dim));
+                }
+            }
         });
     }
     ui.painter().line_segment([pos2(bar.min.x, bar.max.y), pos2(bar.max.x, bar.max.y)], Stroke::new(1.0, t.border));
