@@ -546,7 +546,8 @@ msgstr ""
 msgid "AM"
 msgstr "AM"
 
-#. ribbon location
+#. android, ribbon location
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/Navigation.kt
 #: crates/ui-egui/src/lib.rs
 #, fuzzy
 msgid "About"
@@ -666,7 +667,8 @@ msgstr "Kontoeinstellungen"
 msgid "Account name"
 msgstr "Kontoname"
 
-#. interface, ribbon
+#. android, interface, ribbon
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/Navigation.kt
 #: crates/ui-egui/src/backstage.rs crates/ui-egui/src/ribbon.rs
 #, fuzzy
 msgid "Accounts"
@@ -1891,7 +1893,8 @@ msgstr ""
 msgid "Available formats:"
 msgstr ""
 
-#. command label, interface, ribbon
+#. android, command label, interface, ribbon
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/SettingsScreen.kt
 #: crates/engine/src/cmd/view.rs crates/ui-egui/src/account_setup.rs
 #: crates/ui-egui/src/account_setup/exchange.rs crates/ui-egui/src/backstage.rs
 #: crates/ui-egui/src/ribbon.rs
@@ -2066,7 +2069,8 @@ msgstr "Nach Größe"
 msgid "By Subject"
 msgstr "Nach Betreff"
 
-#. command label, interface, name, ribbon, ribbon location, what a command says
+#. android, command label, interface, name, ribbon, ribbon location, what a command says
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/Navigation.kt
 #: crates/engine/src/cmd/calendar.rs crates/engine/src/cmd/calendar/share.rs
 #: crates/engine/src/cmd/calendar_settings.rs crates/engine/src/cmd/view.rs
 #: crates/engine/src/session.rs crates/ui-egui/src/backstage.rs
@@ -6417,7 +6421,8 @@ msgstr ""
 msgid "Label"
 msgstr "Bezeichnung"
 
-#. interface, ribbon
+#. android, interface, ribbon
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/Navigation.kt
 #: crates/ui-egui/src/backstage.rs crates/ui-egui/src/ribbon.rs
 #, fuzzy
 msgid "Language"
@@ -6699,7 +6704,9 @@ msgstr "Erstellt von seinen Mitwirkenden:"
 msgid "Made in another program or on the web, with parts MailCraft can't show"
 msgstr "In einem anderen Programm oder im Web erstellt, mit Teilen, die MailCraft nicht anzeigen kann"
 
-#. command label, interface, name, ribbon location
+#. android, command label, interface, name, ribbon location
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/MainActivity.kt
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/Navigation.kt
 #: crates/engine/src/cmd/compose.rs crates/engine/src/cmd/graph_send.rs
 #: crates/engine/src/cmd/mail.rs crates/engine/src/cmd/view.rs
 #: crates/engine/src/session.rs crates/ui-egui/src/backstage.rs
@@ -6790,7 +6797,8 @@ msgstr "Nur E-Mail"
 msgid "Mail to Keep Offline"
 msgstr "Offline verfügbare E-Mails"
 
-#. interface
+#. android, interface
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/Navigation.kt
 #: crates/ui-egui/src/account_setup.rs
 #, fuzzy
 msgid "Mail to keep offline"
@@ -7201,6 +7209,11 @@ msgstr "Mai"
 #, fuzzy
 msgid "Meeting"
 msgstr "Besprechung"
+
+#. android
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/Shell.kt
+msgid "Menu"
+msgstr ""
 
 #. interface
 #: crates/ui-egui/src/merge_contacts.rs
@@ -8605,6 +8618,11 @@ msgstr ""
 msgid "Nothing was sent: the mailbox couldn't be saved first ({error})"
 msgstr ""
 
+#. android
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/Navigation.kt
+msgid "Notifications"
+msgstr ""
+
 #. date and time
 #: crates/i18n/src/date.rs
 #, fuzzy
@@ -9384,13 +9402,16 @@ msgstr ""
 msgid "Pattern"
 msgstr "Muster"
 
-#. interface
+#. android, interface
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/SettingsScreen.kt
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/Shell.kt
 #: crates/ui-egui/src/folder_properties.rs crates/ui-egui/src/nav.rs
 #: crates/ui-egui/src/ribbon.rs
 msgid "Pending development"
 msgstr ""
 
-#. command label, interface, name, ribbon location
+#. android, command label, interface, name, ribbon location
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/Navigation.kt
 #: crates/engine/src/cmd/people.rs crates/engine/src/cmd/people_merge.rs
 #: crates/engine/src/cmd/view.rs crates/engine/src/session.rs
 #: crates/ui-egui/src/people_view.rs
@@ -9466,7 +9487,8 @@ msgstr "Bild über dem Text"
 msgid "Picture beside text"
 msgstr "Bild neben dem Text"
 
-#. command label, ribbon
+#. android, command label, ribbon
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/Navigation.kt
 #: crates/engine/src/cmd/picture.rs crates/ui-egui/src/ribbon.rs
 msgid "Pictures"
 msgstr ""
@@ -11415,6 +11437,11 @@ msgstr ""
 msgid "Send/Receive with Microsoft Graph"
 msgstr "Senden/Empfangen mit Microsoft Graph"
 
+#. android
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/Navigation.kt
+msgid "Sender images"
+msgstr ""
+
 #. name
 #: crates/ui-egui/src/forms.rs
 #, fuzzy
@@ -11565,7 +11592,9 @@ msgstr "Manuell einrichten"
 msgid "Setting up the account stopped unexpectedly"
 msgstr ""
 
-#. interface
+#. android, interface
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/AppDrawer.kt
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/SettingsScreen.kt
 #: crates/ui-egui/src/backstage.rs
 #, fuzzy
 msgid "Settings"
@@ -12569,6 +12598,11 @@ msgstr ""
 msgid "System"
 msgstr "System"
 
+#. android
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/SettingsScreen.kt
+msgid "System default"
+msgstr ""
+
 #. interface, ribbon
 #: crates/ui-egui/src/credits.rs crates/ui-egui/src/ribbon.rs
 #, fuzzy
@@ -12628,7 +12662,8 @@ msgstr ""
 msgid "Task:"
 msgstr ""
 
-#. command label, name, ribbon location
+#. android, command label, name, ribbon location
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/Navigation.kt
 #: crates/engine/src/cmd/tasks.rs crates/engine/src/cmd/view.rs
 #: crates/engine/src/session.rs
 #, fuzzy
@@ -13419,6 +13454,7 @@ msgstr "Das Postfach {address} ist über Microsoft Graph nicht erreichbar."
 
 #. android
 #: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/Inbox.kt
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/MainActivity.kt
 msgid "The mailbox could not be read."
 msgstr ""
 
@@ -13622,7 +13658,7 @@ msgid "The rules sent couldn't be noted: {error}"
 msgstr "Die gesendeten Regeln konnten nicht vermerkt werden: {error}"
 
 #. android
-#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/Inbox.kt
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/MainActivity.kt
 msgid "The sample mailbox has no Inbox."
 msgstr ""
 
@@ -15072,7 +15108,8 @@ msgstr "An:"
 msgid "To: {names}"
 msgstr "An: {names}"
 
-#. command label, interface, name, ribbon
+#. android, command label, interface, name, ribbon
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/Navigation.kt
 #: crates/engine/src/cmd/view.rs crates/engine/src/session.rs
 #: crates/time/src/lib.rs crates/ui-egui/src/calendar_view.rs
 #: crates/ui-egui/src/date_picker.rs crates/ui-egui/src/forms.rs
@@ -15510,6 +15547,11 @@ msgstr ""
 #. interface
 #: crates/ui-egui/src/reading/signature.rs
 msgid "Verify…"
+msgstr ""
+
+#. android
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/SettingsScreen.kt
+msgid "Version"
 msgstr ""
 
 #. interface
@@ -20104,6 +20146,13 @@ msgid "{n} unread"
 msgid_plural "{n} unread"
 msgstr[0] "{n} ungelesen"
 msgstr[1] "{n} ungelesen"
+
+#. android
+#: apps/mailcraft-android/app/src/main/kotlin/work/mailcraft/android/AppDrawer.kt
+msgid "{n} unread message"
+msgid_plural "{n} unread messages"
+msgstr[0] ""
+msgstr[1] ""
 
 #. interface
 #: crates/ui-egui/src/folder_properties.rs
