@@ -261,10 +261,11 @@ fn a_pipe_where_a_file_was_named_is_refused_at_once() {
     let mailbox = temp_mailbox("pipe");
     std::fs::create_dir_all(mailbox.parent().unwrap()).unwrap();
     let fifo = mailbox.parent().unwrap().join("p.eml");
-    if std::process::Command::new("mkfifo").arg(&fifo).status().is_ok_and(|s| s.success()) {
-        // (Opening it to read would wait for somebody to write; it is opened without waiting.)
-        assert_eq!(checked(&fifo.to_string_lossy()), None);
-    }
+    // A socket, made in this process rather than by a child process (a fork in another test would
+    // hold a lock file open). Like a pipe, it is not a regular file, and opening it without
+    // waiting fails at once.
+    let _socket = std::os::unix::net::UnixListener::bind(&fifo).unwrap();
+    assert_eq!(checked(&fifo.to_string_lossy()), None);
     let _ = std::fs::remove_dir_all(mailbox.parent().unwrap());
 }
 
