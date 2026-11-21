@@ -1,14 +1,15 @@
-<div align="center">
-  <img src="assets/app-icon/hicolor/128x128/apps/io.github.billsecond.mailcraft.png" width="96" alt="The Mailflow icon: a white envelope with a spark over it, on an indigo tile">
-  <h1>Mailflow</h1>
-  <p><strong>A free, open source mail, calendar, contacts and tasks app for Mac and Windows, with optional help with writing from an AI model you choose.</strong></p>
-</div>
+<p align="left">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="brand/header-dark.png">
+    <img src="brand/header-light.png" width="600" height="160" alt="Mailflow logo and name">
+  </picture>
+</p>
+
+<p align="center"><b>A free, open source mail, calendar, contacts and tasks app for Mac and Windows, with optional help with writing from an AI model you choose.</b></p>
 
 > Mailflow is a fork of [MailCraft](https://github.com/UCS-Care-Group/mailcraft) by UCS Care Group and the MailCraft contributors, an open source project under the MIT License or the Apache License 2.0. Thank you to the MailCraft authors and contributors for the mail engine and the foundation this app is built on. Mailflow is not affiliated with or endorsed by the MailCraft project.
 
 Mailflow is a native desktop mail program: mail, calendar, people and tasks in one window, with the ribbon, folder pane, message list and reading pane people already know. On top of MailCraft it adds a guided setup, colour themes, and help with writing that runs only when you ask for it, on your own computer or with a provider you pick.
-
-![The Mailflow welcome page](design/onboarding/welcome-light.png)
 
 ## Why Mailflow?
 
@@ -30,11 +31,6 @@ Mailflow is a native desktop mail program: mail, calendar, people and tasks in o
 - **Write with AI**: press `/` in an empty message (or click Write with AI) and describe the email you want; it is written into the draft, with placeholders for details you did not give. On a message with text, describe a change or use Polish, Formal, Friendly or Shorten. Right-click selected text for the same help on just that part
 - **Writing preferences**: tone, length, language and your own standing instructions
 - **Your key stays yours**: API keys go in the macOS Keychain or Windows Credential Manager, never in a settings file
-
-| | |
-|---|---|
-| ![The six themes in the setup](design/onboarding/appearance-light.png) | ![Help with writing in the setup](design/ai/onboarding-ai-local-light.png) |
-| ![The Writing Help window](design/ai/writing-help-window-light.png) | ![The inbox in the dark Mailflow theme](design/themes/previews/mailflow-dark.png) |
 
 ### Help with writing: where it can run
 
@@ -65,6 +61,11 @@ Mailflow is not signed with a paid Apple or Microsoft certificate, so your compu
 
 - **Mac:** open the dmg and drag Mailflow to Applications. Open it once; macOS will refuse. Then go to System Settings › Privacy & Security, scroll down, and click **Open Anyway** next to Mailflow.
 - **Windows:** when the blue "Windows protected your PC" box appears, click **More info**, then **Run anyway**.
+
+## Supported platforms
+
+- **Mac:** Apple silicon and Intel (one universal DMG)
+- **Windows:** x64 and ARM64
 
 ## Build it yourself
 
