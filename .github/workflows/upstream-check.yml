@@ -1,0 +1,56 @@
+name: Upstream check
+
+# Once a week, and on demand: is upstream ahead of rebrand/upstream.json? If so, try the merge and
+# the rebrand in this throwaway checkout and keep one "upstream-update" issue up to date with the
+# result. Nothing here changes the app. To bring the changes in, run "Upstream prepare".
+# The logic is in rebrand/upstream.py, the same file in every FlowApps fork.
+
+on:
+  schedule:
+    - cron: "0 14 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: upstream
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Compare with upstream and try the merge
+        id: report
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "flowapps-upstream-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          python3 rebrand/upstream.py report --out report.md --github-output
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Open, update or close the issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NEW: ${{ steps.report.outputs.new_commits }}
+          THEIRS: ${{ steps.report.outputs.theirs }}
+        run: |
+          LABEL=upstream-update
+          EXISTING="$(gh issue list --label "$LABEL" --state open --json number --jq '.[0].number')"
+          if [ "$NEW" = "0" ]; then
+            if [ -n "$EXISTING" ]; then gh issue close "$EXISTING" --comment "Up to date with upstream ($THEIRS)."; fi
+            exit 0
+          fi
+          TITLE="Upstream update available: $NEW new commit(s), up to $THEIRS"
+          if [ -n "$EXISTING" ]; then
+            gh issue edit "$EXISTING" --title "$TITLE" --body-file report.md
+          else
+            gh label create "$LABEL" --color 449837 --description "Upstream has changes to merge" 2>/dev/null || true
+            gh issue create --title "$TITLE" --label "$LABEL" --body-file report.md
+          fi
