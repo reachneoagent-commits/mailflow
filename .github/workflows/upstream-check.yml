@@ -18,6 +18,11 @@ concurrency:
   group: upstream
   cancel-in-progress: false
 
+# The merge adds a git remote named "upstream", and gh prefers it over origin. Pin gh to this
+# repository so issues and pull requests never go to the upstream project.
+env:
+  GH_REPO: ${{ github.repository }}
+
 jobs:
   check:
     runs-on: ubuntu-latest
