@@ -80,3 +80,19 @@ title), commit and open a pull request.
 
 `rebrand/apply.py` was checked on 2026-11-26 against upstream `64b35c2b9` (the merge-base):
 applied to a clean upstream copy, it reproduces every branded file exactly.
+
+## Automatic check and prepare
+
+`rebrand/upstream.py` (the same file in every FlowApps fork) and two workflows do the routine part:
+
+- **Upstream check** runs every Monday and on demand. It keeps one `upstream-update` issue current:
+  the new upstream commits, a trial merge, and whether the rebrand still applies. It closes the issue
+  once we're up to date.
+- **Upstream prepare** runs only by hand. It merges upstream on an `upstream-sync/<date>` branch,
+  re-applies the branding, checks it, updates `rebrand/upstream.json` and opens a pull request for
+  review. It needs the `UPSTREAM_PUSH_TOKEN` secret (see the workflow). If a conflict or the rebrand
+  needs a person, it stops without pushing anything; then merge by hand as above.
+
+`"conflicts"` in `rebrand/upstream.json` is `"stop"`: any conflict stops the prepare step, because this fork carries its own code. Upstream's own workflow changes are
+never brought in automatically; the pull request lists them. Locally: `python3 rebrand/upstream.py
+status`, `report --out FILE` or `prepare --body FILE`.
