@@ -4,6 +4,9 @@ Rust-native mail, calendar, contacts and tasks program. Upstream names (`mailcra
 
 This file is the short version. **`AGENTS.md` is the full rulebook and it wins on any conflict.** Before changing code in an area below, read that section of `AGENTS.md` first; don't read the whole file otherwise.
 
+## Upstream merges and branding
+Read `docs/UPSTREAM.md` before merging upstream or changing a name, id, link or icon. Branding in upstream's files is made only by `rebrand/apply.py` from `rebrand/brand.json` (never by hand); Mailflow's features are ordinary commits and must not be overwritten with "take theirs".
+
 ## Start
 1. Read `plan/STATUS.md` if it exists (local only); otherwise `ROADMAP.md` and `docs/gaps.md`.
 2. Don't stop to ask unless the decision is the owner's: licensing, publishing, pushing to new remotes, secrets, anything touching a real mail account.

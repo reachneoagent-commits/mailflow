@@ -18,3 +18,9 @@
 # Messages that are test vectors are kept byte for byte: a Digital signature covers their CRLF line ends.
 crates/smime/testdata/** binary
 fuzz/seeds/smime/** binary
+
+# Mailflow (rebrand/apply.py): files we replace whole keep our version in a merge.
+# Needs `git config merge.ours.driver true` once per clone (docs/UPSTREAM.md).
+README.md merge=ours
+CLAUDE.md merge=ours
+assets/app-icon/** merge=ours

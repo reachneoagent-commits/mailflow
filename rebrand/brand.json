@@ -1,0 +1,361 @@
+{
+  "name": "Mailflow",
+  "bundle": "com.flowapps.mailflow",
+  "repo": "reachneoagent-commits/mailflow",
+  "upstream_name": "MailCraft",
+  "_comment": "Branding only: names, ids, settings folders, links, installer names, icons. Mailflow's features (AI help, onboarding, themes, ribbon, compose) are ordinary commits carried by git merge; see docs/UPSTREAM.md.",
+  "edits": [
+    {
+      "file": "apps/mailcraft/build.rs",
+      "find": ".set(\"ProductName\", \"MailCraft\")",
+      "replace": ".set(\"ProductName\", \"Mailflow\")"
+    },
+    {
+      "file": "apps/mailcraft/build.rs",
+      "find": ".set(\"FileDescription\", \"MailCraft mail and calendar\")",
+      "replace": ".set(\"FileDescription\", \"Mailflow mail and calendar\")"
+    },
+    {
+      "file": "apps/mailcraft/build.rs",
+      "find": ".set(\"CompanyName\", \"MailCraft contributors\")",
+      "replace": ".set(\"CompanyName\", \"Mailflow contributors\")"
+    },
+    {
+      "file": "apps/mailcraft/build.rs",
+      "find": ".set(\"LegalCopyright\", \"Copyright (c) the MailCraft authors. MIT OR Apache-2.0.\")",
+      "replace": ".set(\"LegalCopyright\", \"Copyright (c) the Mailflow authors and the MailCraft contributors. MIT OR Apache-2.0.\")"
+    },
+    {
+      "file": "apps/mailcraft/src/alerts.rs",
+      "find": "let sent: zbus::Result<u32> = proxy.call(\"Notify\", &(\"MailCraft\", 0u32, \"\", alert.title.as_str(), body.as_str(), offered, hints, -1i32));",
+      "replace": "let sent: zbus::Result<u32> = proxy.call(\"Notify\", &(\"Mailflow\", 0u32, \"\", alert.title.as_str(), body.as_str(), offered, hints, -1i32));"
+    },
+    {
+      "file": "apps/mailcraft/src/main.rs",
+      "find": "let mut app = WithTokens(eframe::create_native(\"MailCraft\", options, creator, &event_loop));",
+      "replace": "let mut app = WithTokens(eframe::create_native(\"Mailflow\", options, creator, &event_loop));"
+    },
+    {
+      "file": "apps/mailcraft/src/main.rs",
+      "find": "eframe::run_native(\"MailCraft\", options, creator)",
+      "replace": "eframe::run_native(\"Mailflow\", options, creator)"
+    },
+    {
+      "file": "apps/mailcraft/src/main.rs",
+      "find": ".set_title(\"MailCraft\")",
+      "replace": ".set_title(\"Mailflow\")"
+    },
+    {
+      "file": "apps/mailcraft/src/main.rs",
+      "find": ".with_title(\"MailCraft\")",
+      "replace": ".with_title(\"Mailflow\")"
+    },
+    {
+      "file": "apps/mailcraft/src/main.rs",
+      "find": "if let Err(e) = quit_macos::install_app_menu(&cc.egui_ctx, \"MailCraft\") {",
+      "replace": "if let Err(e) = quit_macos::install_app_menu(&cc.egui_ctx, \"Mailflow\") {"
+    },
+    {
+      "file": "apps/mailcraft/src/menubar.rs",
+      "find": "let app_menu = Submenu::new(\"MailCraft\", true);",
+      "replace": "let app_menu = Submenu::new(\"Mailflow\", true);"
+    },
+    {
+      "file": "apps/mailcraft/src/opened_files.rs",
+      "find": "cache.is_absolute().then(|| cache.join(\"MailCraft\").join(\"Attachments\"))",
+      "replace": "cache.is_absolute().then(|| cache.join(\"Mailflow\").join(\"Attachments\"))"
+    },
+    {
+      "file": "apps/mailcraft/src/opened_files.rs",
+      "find": "dir.join(\"MailCraft\").join(\"Attachments\")",
+      "replace": "dir.join(\"Mailflow\").join(\"Attachments\")"
+    },
+    {
+      "file": "apps/mailcraft/src/secrets.rs",
+      "find": "pub(super) const SERVICE: &str = \"MailCraft\";",
+      "replace": "pub(super) const SERVICE: &str = \"Mailflow\";"
+    },
+    {
+      "file": "apps/mailcraft/src/secrets.rs",
+      "find": "let entry = |user: &str| mock.build(\"MailCraft\", user, None).unwrap();",
+      "replace": "let entry = |user: &str| mock.build(\"Mailflow\", user, None).unwrap();"
+    },
+    {
+      "file": "apps/mailcraft/src/secrets.rs",
+      "find": "assert_eq!(os::SERVICE, \"MailCraft\");",
+      "replace": "assert_eq!(os::SERVICE, \"Mailflow\");"
+    },
+    {
+      "file": "apps/mailcraft/src/wipe.rs",
+      "find": "name: if cfg!(any(windows, target_os = \"macos\")) { \"MailCraft\" } else { \"mailcraft\" },",
+      "replace": "name: if cfg!(any(windows, target_os = \"macos\")) { \"Mailflow\" } else { \"mailflow\" },"
+    },
+    {
+      "file": "apps/mailcraft/src/wipe.rs",
+      "find": "roots.parents.push(Root { path: cache.to_path_buf(), name: \"MailCraft\", itself: true });",
+      "replace": "roots.parents.push(Root { path: cache.to_path_buf(), name: \"Mailflow\", itself: true });"
+    },
+    {
+      "file": "crates/control-key/src/lib.rs",
+      "find": "std::env::var_os(\"HOME\").map(|h| PathBuf::from(h).join(\"Library/Application Support/MailCraft\"))",
+      "replace": "std::env::var_os(\"HOME\").map(|h| PathBuf::from(h).join(\"Library/Application Support/Mailflow\"))"
+    },
+    {
+      "file": "crates/control-key/src/lib.rs",
+      "find": "std::env::var_os(\"APPDATA\").map(|a| PathBuf::from(a).join(\"MailCraft\"))",
+      "replace": "std::env::var_os(\"APPDATA\").map(|a| PathBuf::from(a).join(\"Mailflow\"))"
+    },
+    {
+      "file": "crates/control-key/src/lib.rs",
+      "find": ".map(|c| c.join(\"mailcraft\"))",
+      "replace": ".map(|c| c.join(\"mailflow\"))"
+    },
+    {
+      "file": "crates/control-key/src/tests.rs",
+      "find": "assert!(name == \"mailcraft\" || name == \"MailCraft\", \"{}\", d.display());",
+      "replace": "assert!(name == \"mailflow\" || name == \"Mailflow\", \"{}\", d.display());"
+    },
+    {
+      "file": "crates/ui-egui/src/account_setup.rs",
+      "find": "ui.painter().text(pos2(r.min.x + 46.0, r.center().y), Align2::LEFT_CENTER, \"MailCraft\", semibold(17.0), t.text);",
+      "replace": "ui.painter().text(pos2(r.min.x + 46.0, r.center().y), Align2::LEFT_CENTER, crate::i18n::name(), semibold(17.0), t.text);"
+    },
+    {
+      "file": "crates/ui-egui/src/dialogs.rs",
+      "find": "let open = window(ctx, \"MailCraft\", 420.0, |ui| {",
+      "replace": "let open = window(ctx, crate::i18n::name(), 420.0, |ui| {"
+    },
+    {
+      "file": "crates/ui-egui/src/dialogs.rs",
+      "find": "ui.label(egui::RichText::new(\"MailCraft\").font(semibold(20.0)).color(t.accent_text));",
+      "replace": "ui.label(egui::RichText::new(crate::i18n::name()).font(semibold(20.0)).color(t.accent_text));"
+    },
+    {
+      "file": "packaging/macos/Info.plist.in",
+      "find": "<string>MailCraft</string>",
+      "replace": "<string>Mailflow</string>"
+    },
+    {
+      "file": "packaging/macos/Info.plist.in",
+      "find": "<string>io.github.billsecond.mailcraft</string>",
+      "replace": "<string>com.flowapps.mailflow</string>"
+    },
+    {
+      "file": "packaging/macos/Info.plist.in",
+      "find": "<string>Copyright © the MailCraft authors. MIT OR Apache-2.0.</string>",
+      "replace": "<string>Copyright © the Mailflow authors and the MailCraft contributors. MIT OR Apache-2.0.</string>"
+    },
+    {
+      "file": "packaging/macos/package.sh",
+      "find": "#   $DIST/mailcraft-<version>-macos-<arch>.dmg          MailCraft.app on a drag-to-Applications DMG",
+      "replace": "#   $DIST/mailflow-<version>-macos-<arch>.dmg           Mailflow.app on a drag-to-Applications DMG"
+    },
+    {
+      "file": "packaging/macos/package.sh",
+      "find": "APP=\"$WORK/MailCraft.app\"",
+      "replace": "APP=\"$WORK/Mailflow.app\""
+    },
+    {
+      "file": "packaging/macos/package.sh",
+      "find": "DMG=\"$DIST/mailcraft-$VERSION-macos-$ARCH.dmg\"",
+      "replace": "DMG=\"$DIST/mailflow-$VERSION-macos-$ARCH.dmg\""
+    },
+    {
+      "file": "packaging/macos/package.sh",
+      "find": "echo \"==> MailCraft $VERSION for macOS ($ARCH), identity: $IDENTITY, notarize: $NOTARIZE\"",
+      "replace": "echo \"==> Mailflow $VERSION for macOS ($ARCH), identity: $IDENTITY, notarize: $NOTARIZE\""
+    },
+    {
+      "file": "packaging/macos/package.sh",
+      "find": "# ---- MailCraft.app ----------------------------------------------------------------------------",
+      "replace": "# ---- Mailflow.app ----------------------------------------------------------------------------"
+    },
+    {
+      "file": "packaging/macos/package.sh",
+      "find": "cp \"$WORK/bin/mailcraft\" \"$APP/Contents/MacOS/MailCraft\"",
+      "replace": "cp \"$WORK/bin/mailcraft\" \"$APP/Contents/MacOS/Mailflow\""
+    },
+    {
+      "file": "packaging/macos/package.sh",
+      "find": "cp \"$ROOT/assets/app-icon/mailcraft.icns\" \"$APP/Contents/Resources/MailCraft.icns\"",
+      "replace": "cp \"$ROOT/assets/app-icon/mailcraft.icns\" \"$APP/Contents/Resources/Mailflow.icns\""
+    },
+    {
+      "file": "packaging/macos/package.sh",
+      "find": "sign --options runtime --entitlements \"$HERE/entitlements.plist\" \"$APP/Contents/MacOS/MailCraft\"",
+      "replace": "sign --options runtime --entitlements \"$HERE/entitlements.plist\" \"$APP/Contents/MacOS/Mailflow\""
+    },
+    {
+      "file": "packaging/macos/package.sh",
+      "find": "ditto -c -k --keepParent \"$APP\" \"$WORK/MailCraft-notarize.zip\"",
+      "replace": "ditto -c -k --keepParent \"$APP\" \"$WORK/Mailflow-notarize.zip\""
+    },
+    {
+      "file": "packaging/macos/package.sh",
+      "find": "notarize \"$WORK/MailCraft-notarize.zip\"",
+      "replace": "notarize \"$WORK/Mailflow-notarize.zip\""
+    },
+    {
+      "file": "packaging/macos/package.sh",
+      "find": "ditto \"$APP\" \"$STAGE/MailCraft.app\"",
+      "replace": "ditto \"$APP\" \"$STAGE/Mailflow.app\""
+    },
+    {
+      "file": "packaging/macos/package.sh",
+      "find": "if hdiutil create -volname \"MailCraft\" -srcfolder \"$STAGE\" -fs HFS+ -format UDZO -imagekey zlib-level=9 -ov \"$DMG\"; then",
+      "replace": "if hdiutil create -volname \"Mailflow\" -srcfolder \"$STAGE\" -fs HFS+ -format UDZO -imagekey zlib-level=9 -ov \"$DMG\"; then"
+    },
+    {
+      "file": "packaging/windows/mailcraft.wxs",
+      "find": "\n      Name=\"MailCraft\"\n",
+      "replace": "\n      Name=\"Mailflow\"\n"
+    },
+    {
+      "file": "packaging/windows/mailcraft.wxs",
+      "find": "Manufacturer=\"MailCraft contributors\"",
+      "replace": "Manufacturer=\"Mailflow contributors\""
+    },
+    {
+      "file": "packaging/windows/mailcraft.wxs",
+      "find": "<Property Id=\"ARPURLINFOABOUT\" Value=\"https://github.com/UCS-Care-Group/mailcraft\" />",
+      "replace": "<Property Id=\"ARPURLINFOABOUT\" Value=\"https://github.com/reachneoagent-commits/mailflow\" />"
+    },
+    {
+      "file": "packaging/windows/mailcraft.wxs",
+      "find": "<Property Id=\"ARPURLUPDATEINFO\" Value=\"https://github.com/UCS-Care-Group/mailcraft\" />",
+      "replace": "<Property Id=\"ARPURLUPDATEINFO\" Value=\"https://github.com/reachneoagent-commits/mailflow\" />"
+    },
+    {
+      "file": "packaging/windows/mailcraft.wxs",
+      "find": "<Property Id=\"ARPHELPLINK\" Value=\"https://github.com/UCS-Care-Group/mailcraft/issues\" />",
+      "replace": "<Property Id=\"ARPHELPLINK\" Value=\"https://github.com/reachneoagent-commits/mailflow/issues\" />"
+    },
+    {
+      "file": "packaging/windows/mailcraft.wxs",
+      "find": "<Property Id=\"WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT\" Value=\"Launch MailCraft\" />",
+      "replace": "<Property Id=\"WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT\" Value=\"Launch Mailflow\" />"
+    },
+    {
+      "file": "packaging/windows/mailcraft.wxs",
+      "find": "<Directory Id=\"INSTALLFOLDER\" Name=\"MailCraft\" />",
+      "replace": "<Directory Id=\"INSTALLFOLDER\" Name=\"Mailflow\" />"
+    },
+    {
+      "file": "packaging/windows/mailcraft.wxs",
+      "find": "<Feature Id=\"Main\" Title=\"MailCraft\" Level=\"1\">",
+      "replace": "<Feature Id=\"Main\" Title=\"Mailflow\" Level=\"1\">"
+    },
+    {
+      "file": "packaging/windows/mailcraft.wxs",
+      "find": "<Component Id=\"MailcraftApp\" Guid=\"6883EF8E-7160-4B89-85C5-0DB6E7264E61\">",
+      "replace": "<Component Id=\"MailcraftApp\" Guid=\"A0BBA99A-30C2-4834-836D-8927262B406F\">"
+    },
+    {
+      "file": "packaging/windows/mailcraft.wxs",
+      "find": "<Shortcut Id=\"StartMenuShortcut\" Directory=\"ProgramMenuFolder\" Name=\"MailCraft\"",
+      "replace": "<Shortcut Id=\"StartMenuShortcut\" Directory=\"ProgramMenuFolder\" Name=\"Mailflow\""
+    },
+    {
+      "file": "packaging/windows/mailcraft.wxs",
+      "find": "<Component Id=\"MailcraftFileTypes\" Guid=\"D5E14B14-1BE0-4E96-A849-E5F04AC4D6BB\">",
+      "replace": "<Component Id=\"MailcraftFileTypes\" Guid=\"8CD9A495-64E9-4B15-8557-007AEE2B4D7C\">"
+    },
+    {
+      "file": "packaging/windows/mailcraft.wxs",
+      "find": "<RegistryValue Root=\"HKLM\" Key=\"Software\\MailCraft\\Capabilities\" Name=\"ApplicationName\" Value=\"MailCraft\" Type=\"string\" />",
+      "replace": "<RegistryValue Root=\"HKLM\" Key=\"Software\\MailCraft\\Capabilities\" Name=\"ApplicationName\" Value=\"Mailflow\" Type=\"string\" />"
+    },
+    {
+      "file": "packaging/windows/mailcraft.wxs",
+      "find": "<RegistryValue Root=\"HKLM\" Key=\"Software\\Classes\\Applications\\mailcraft.exe\" Name=\"FriendlyAppName\" Value=\"MailCraft\" Type=\"string\" />",
+      "replace": "<RegistryValue Root=\"HKLM\" Key=\"Software\\Classes\\Applications\\mailcraft.exe\" Name=\"FriendlyAppName\" Value=\"Mailflow\" Type=\"string\" />"
+    },
+    {
+      "file": "packaging/windows/mailcraft.wxs",
+      "find": "<Component Id=\"MailcraftUpdatePolicy\" Guid=\"3B0C9E57-5A2D-4F0B-9C0E-7D8E2F61A4C3\" Condition=\"DISABLEAUTOMATICUPDATES = 1\">",
+      "replace": "<Component Id=\"MailcraftUpdatePolicy\" Guid=\"828ADE4A-AF81-4B48-A903-B0905E41FCC7\" Condition=\"DISABLEAUTOMATICUPDATES = 1\">"
+    },
+    {
+      "file": "packaging/windows/package.ps1",
+      "find": "$paragraphs.Add('\\b MailCraft\\b0')",
+      "replace": "$paragraphs.Add('\\b Mailflow\\b0')"
+    },
+    {
+      "file": "packaging/windows/package.ps1",
+      "find": "$paragraphs.Add((ConvertTo-RtfText 'MailCraft is dual-licensed under the MIT License or the Apache License, Version 2.0, at your option. Both license texts follow. Bundled fonts and other third-party material keep their own open licenses, listed in NOTICE and ATTRIBUTION.md at https://github.com/UCS-Care-Group/mailcraft.'))",
+      "replace": "$paragraphs.Add((ConvertTo-RtfText 'Mailflow, built on MailCraft, is dual-licensed under the MIT License or the Apache License, Version 2.0, at your option. Both license texts follow. Bundled fonts and other third-party material keep their own open licenses, listed in NOTICE and ATTRIBUTION.md at https://github.com/reachneoagent-commits/mailflow.'))"
+    },
+    {
+      "file": "packaging/windows/package.ps1",
+      "find": "$Msi = Join-Path $Dist \"mailcraft-$Version-windows-$Arch.msi\"",
+      "replace": "$Msi = Join-Path $Dist \"mailflow-$Version-windows-$Arch.msi\""
+    },
+    {
+      "file": "packaging/windows/package.ps1",
+      "find": "$Zip = Join-Path $Dist \"mailcraft-$Version-windows-$Arch-portable.zip\"",
+      "replace": "$Zip = Join-Path $Dist \"mailflow-$Version-windows-$Arch-portable.zip\""
+    },
+    {
+      "file": "packaging/windows/mailcraft.wxs",
+      "find": "Description=\"MailCraft mail and calendar\"",
+      "replace": "Description=\"Mailflow mail and calendar\""
+    },
+    {
+      "file": "packaging/windows/mailcraft.wxs",
+      "find": "UpgradeCode=\"647FB3CC-7876-4DC8-84D9-CE2DD295D1C7\"",
+      "replace": "UpgradeCode=\"F7D5DD29-1E62-41B1-B314-7EC0BFE62740\""
+    },
+    {
+      "file": "packaging/windows/mailcraft.wxs",
+      "find": "finish page.\n\n  UpgradeCode and",
+      "replace": "finish page.\n\n  (Mailflow: these are Mailflow's own UpgradeCode and component GUIDs, not upstream MailCraft's.)\n  UpgradeCode and",
+      "done": "(Mailflow: these are Mailflow's own UpgradeCode"
+    },
+    {
+      "file": "crates/control-key/src/lib.rs",
+      "find": "/// `~/Library/Application Support/MailCraft`, Windows `%APPDATA%\\MailCraft`, otherwise\n/// `$XDG_CONFIG_HOME/mailcraft` or `~/.config/mailcraft`.",
+      "replace": "/// `~/Library/Application Support/Mailflow`, Windows `%APPDATA%\\Mailflow`, otherwise\n/// `$XDG_CONFIG_HOME/mailflow` or `~/.config/mailflow`. (Mailflow keeps its own, apart from a\n/// MailCraft on the same computer.)"
+    }
+  ],
+  "prepend": [
+    {
+      "file": "NOTICE",
+      "marker": "Mailflow is a fork of MailCraft",
+      "lines": [
+        "Mailflow",
+        "Mailflow is a fork of MailCraft (https://github.com/UCS-Care-Group/mailcraft) with its own name,",
+        "look and additions. Mailflow's changes are licensed, like MailCraft, under the MIT License or the",
+        "Apache License, Version 2.0, at your option. The Mailflow name, mark and app icon (brand/,",
+        "assets/app-icon/) are its owner's brand and are not covered by that licence. Mailflow is not",
+        "affiliated with or endorsed by the MailCraft project. MailCraft's own notice follows, unchanged.",
+        ""
+      ]
+    }
+  ],
+  "append": [
+    {
+      "file": ".gitignore",
+      "marker": "# Brand sources are kept outside the repo",
+      "lines": [
+        "",
+        "# Brand sources are kept outside the repo",
+        "/brand/",
+        "",
+        "# Local/generated files (repo audit)",
+        "*.log"
+      ]
+    },
+    {
+      "file": ".gitattributes",
+      "marker": "# Mailflow (rebrand/apply.py)",
+      "lines": [
+        "",
+        "# Mailflow (rebrand/apply.py): files we replace whole keep our version in a merge.",
+        "# Needs `git config merge.ours.driver true` once per clone (docs/UPSTREAM.md).",
+        "README.md merge=ours",
+        "CLAUDE.md merge=ours",
+        "assets/app-icon/** merge=ours"
+      ]
+    }
+  ]
+}
