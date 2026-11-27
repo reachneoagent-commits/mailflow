@@ -46,14 +46,14 @@ With Ollama, Mailflow can have it fetch a small starter model (Qwen2.5 0.5B, abo
 
 **Easiest:** install and update it with the [FlowApps launcher](https://github.com/reachneoagent-commits/FlowApps-Launcher/releases/latest), one app that also manages the other FlowApps on Mac and Windows. Or download an installer yourself below.
 
-Download the installer for your system (latest version, 0.12.1), then follow the steps for your system below.
+Download the installer for your system (latest version, 0.12.2), then follow the steps for your system below.
 
 | Platform | Installer |
 |---|---|
-| Windows x64 | [Installer](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.1/mailflow-0.12.1-windows-x64.msi) · [portable zip](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.1/mailflow-0.12.1-windows-x64-portable.zip) |
-| Windows ARM64 | [Installer](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.1/mailflow-0.12.1-windows-arm64.msi) · [portable zip](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.1/mailflow-0.12.1-windows-arm64-portable.zip) |
-| macOS Apple Silicon (M1 or newer) | [DMG](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.1/mailflow-0.12.1-macos-universal.dmg) |
-| macOS Intel | [DMG](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.1/mailflow-0.12.1-macos-universal.dmg) |
+| Windows x64 | [Installer](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.2/mailflow-0.12.2-windows-x64.msi) · [portable zip](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.2/mailflow-0.12.2-windows-x64-portable.zip) |
+| Windows ARM64 | [Installer](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.2/mailflow-0.12.2-windows-arm64.msi) · [portable zip](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.2/mailflow-0.12.2-windows-arm64-portable.zip) |
+| macOS Apple Silicon (M1 or newer) | [DMG](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.2/mailflow-0.12.2-macos-universal.dmg) |
+| macOS Intel | [DMG](https://github.com/reachneoagent-commits/mailflow/releases/download/v0.12.2/mailflow-0.12.2-macos-universal.dmg) |
 
 Older versions are on the [Releases page](https://github.com/reachneoagent-commits/mailflow/releases).
 
